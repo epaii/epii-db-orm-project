@@ -1,0 +1,15 @@
+{
+  "name": "epii-orm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://epii@git.wszx.cc:29418/epii/node-epii-db.git"
+  },
+  "author": "",
+  "license": "ISC"
+}

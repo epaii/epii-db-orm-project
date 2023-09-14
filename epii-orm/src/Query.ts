@@ -1,4 +1,5 @@
-import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem } from "./InterfaceTypes";
+import { Db } from "./Db";
+import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData } from "./InterfaceTypes";
 type QueryWhereLogic = 'and' | 'or';
 interface QueryWhereItem {
     field: string,
@@ -81,7 +82,7 @@ class Query {
     }
 
 
-   private mkWhereByCommon(logic:QueryWhereLogic,fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null) {
+    private mkWhereByCommon(logic: QueryWhereLogic, fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null) {
         if (value === null) {
             if (typeof fieldOrConditionOrWhereData === "string") {
                 return this.mkWhere(logic, null, "", fieldOrConditionOrWhereData);
@@ -92,26 +93,31 @@ class Query {
             return this.mkWhere(logic, fieldOrConditionOrWhereData.toString(), "=", value);
     }
     where(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null) {
-        return this.mkWhereByCommon("and",fieldOrConditionOrWhereData,value);
+        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value);
     }
-    
+
     whereOr(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null) {
-        return this.mkWhereByCommon("or",fieldOrConditionOrWhereData,value);
+        return this.mkWhereByCommon("or", fieldOrConditionOrWhereData, value);
     }
 
 
-    // public Query<T> whereLike(String field, String value) {
+    whereLike(field: string, value: string) {
+        return this.mkWhere("and", field, " like ", value);
+    }
+    whereBetween(field: string, start: Number, end: number) {
+        return this.mkWhere("and", field, " between ", start + " and " + end);
+    }
 
-    //     return mkWhere("and", field, " like ", value);
-    // }
-    // public Query<T> whereBetween(String field, int start,int end) {
+    select(conditionOrWhereData: string | QueryWhereItem | null = null): Promise<Array<RowData>> {
+        if(Db.config.connection !=null){
+            return Db.config.connection.select();
+        }
+        
+    }
 
-    //     return mkWhere("and", field, " between ", start+" and "+end);
-    // }
 
 
 
-    
 }
 
 export { Query }

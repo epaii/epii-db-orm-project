@@ -1,3 +1,5 @@
+import { SqlData } from "./SqlData";
+export type FunctionOrNull = Function | null;
 export type StringOrNull = string | null;
 export type QueryOptionsKeys = 'alias' | 'field' | 'group' | 'having';
 export type QueryJoinType = 'left' | 'right' | 'inner';
@@ -7,20 +9,18 @@ export interface QueryJoinItem {
     type: QueryJoinType
 }
 
+export interface RowData {
+    [key: string]:string
+}
+
 export interface IConnection {
-      insert(  sqlData:String):Int8Array;
+    insert(sqlData: SqlData): Promise< Number>,
 
-    public int update(SqlData sqlData);
+    update(sqlData: SqlData):Promise< Number>,
 
-    public int insertGetId(SqlData sqlData);
+    find(sqlData: SqlData):Promise< RowData|null>
 
-    public <T> T find(SqlData sqlData, Class<T> type);
-
-    public <T> List<T> select(SqlData sqlData, Class<T> type);
-
-    public int[] insertAll(SqlData sqlData);
-
-    public int delete(SqlData deleteSql);
-
-    public <T> T queryForObject(SqlData sqlData, Class<T> type);
+    select(sqlData: SqlData):Promise< Array<RowData>>;
+    insertAll(sqlData: SqlData):Promise< Number>;
+    delete(deleteSql: SqlData):Promise< Number>
 }

@@ -1,9 +1,13 @@
+import { IConnection } from "../InterfaceTypes";
+
 type ConfigType = {
-    tablePrefix?: string
+    tablePrefix?: string,
+    connection: IConnection | null
 }
 
 let config: ConfigType = {
-    tablePrefix: ""
+    tablePrefix: "",
+    connection: null
 }
 
 export { config, ConfigType };

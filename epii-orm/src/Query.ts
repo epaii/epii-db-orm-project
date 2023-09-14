@@ -99,6 +99,16 @@ class Query {
         return this.mkWhereByCommon("or",fieldOrConditionOrWhereData,value);
     }
 
+
+    // public Query<T> whereLike(String field, String value) {
+
+    //     return mkWhere("and", field, " like ", value);
+    // }
+    // public Query<T> whereBetween(String field, int start,int end) {
+
+    //     return mkWhere("and", field, " between ", start+" and "+end);
+    // }
+
 }
 
 export { Query }

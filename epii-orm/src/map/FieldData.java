@@ -11,6 +11,12 @@ public class FieldData extends MapData<FieldData> {
           this.thisObj = this;
     }
 
+    // this.fromMap(new HashMap<>String,Object(){{
+    //     this.put("id",1);
+    //     this.put("name","xiaomin");
+
+    // }});
+
     public static FieldData fromMap(Map<String, Object> data) {
         FieldData fieldData = new FieldData();
         for (Map.Entry<String, Object> entry : data.entrySet()) {

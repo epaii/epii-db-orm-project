@@ -36,8 +36,22 @@ async function start() {
     //     return item.name+'--';
     // })
     // let list = await Db.name("test_xlx").where('name','aaaa').update({name:"ceshi0"})
-    // let list = await Db.name("test_xlx").whereOp("id",">","1").update({value:"123465"})
-    let list = await Db.name('test_xlx').whereBetween("id",2,3).select();
+       await Db.name("test_xlx").whereOp("id",">","1").update({value:"123465"})
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+       let list = await Db.name('test_xlx').select();
     console.log(list);
 }
 

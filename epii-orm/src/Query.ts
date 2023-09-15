@@ -33,8 +33,9 @@ class Query {
     }
 
 
-    map<T>(fun: ArrayMapFunction<RowData, T>) {
+    map<T>(fun: ArrayMapFunction<RowData, T>):Query {
         this.rowMapFunction = fun;
+        return this;
     }
 
     setOption(key: QueryOptionsKeys, value: string): Query {
@@ -88,7 +89,7 @@ class Query {
         return this;
     }
 
-    private mkWhere(logic: QueryWhereLogic, field: StringOrNull, op: string, condition: string) {
+    private mkWhere(logic: QueryWhereLogic, field: StringOrNull, op: string, condition: string):Query {
 
         if (field == null) {
             this.options.where[logic].push(condition);

@@ -97,7 +97,7 @@ export const SqlBuilder = {
     sqlBuilder.append("insert into ");
     sqlBuilder.append(options.table.toString());
     sqlBuilder.append(" (");
-    for (const key in mapData) {
+    for (let [ key ] of mapData) {
       sqlBuilder.append(key);
       sqlBuilder.append(",");
     }
@@ -108,7 +108,7 @@ export const SqlBuilder = {
     fieldDataList?.forEach(fieldData => {
       let mapData = fieldData.mapData;
       sqlBuilder.append("(");
-      for (const key in mapData) {
+      for (let [ key ] of mapData) {
         sqlBuilder.append("?");
         params.push(mapData.get(key)!.toString());
         sqlBuilder.append(",");
@@ -122,6 +122,8 @@ export const SqlBuilder = {
   },
 
   getInsertSql(options: QueryOptions): SqlData {
+   // console.log(options);
+    
     let mapData = options.fieldData?.mapData;
     if (mapData) {
 
@@ -130,14 +132,17 @@ export const SqlBuilder = {
       sqlBuilder.append("insert into ");
       sqlBuilder.append(options.table.toString());
       sqlBuilder.append(" (");
-      for (const key in mapData) {
+      
+ 
+      for (let [ key ] of mapData) {
+
         sqlBuilder.append(key);
         sqlBuilder.append(",");
       }
       sqlBuilder.pop();
 
       sqlBuilder.append(" ) VALUES (");
-      for (const key in mapData) {
+      for (let [ key ] of mapData) {
         sqlBuilder.append("?");
         params.push(mapData.get(key)!.toString());
         sqlBuilder.append(",");

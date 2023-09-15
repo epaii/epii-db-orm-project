@@ -10,7 +10,7 @@ export interface PlainObject {
     [key: string]: BaseType
 }
 
-export type BaseMap = Map<String, BaseType>;
+export type BaseMap = Map<string, BaseType>;
 export interface QueryJoinItem {
     name: string,
     condition: string,

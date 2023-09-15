@@ -45,14 +45,12 @@ class XXConnectionMysql implements IConnection {
     }
     async delete(sqlData: SqlData): Promise<number> {
         let resut = this.changeResult(await this.connectionHandler?.execute(sqlData.getSql(), sqlData.getParams()));
-        return resut.changedRows - 0;
+        return resut.affectedRows - 0;
     }
 
     changeResult(result: any[]): any {
         return result[0];
     }
-
-
 
     async find(sqlData: SqlData): Promise<RowData | null> {
         let list = await this.select(sqlData);

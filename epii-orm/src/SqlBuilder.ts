@@ -1,8 +1,10 @@
 
-import { PlainMap, QueryOptions } from "./InterfaceTypes";
+import { PlainMap, QueryOptions, QueryWhereItem, QueryWhereLogic } from "./InterfaceTypes";
 import { Query } from "./Query";
 import { SqlData } from "./SqlData";
 import { StringBuilder } from "./libs/StringBuilder";
+import { FieldData } from "./map/FieldData";
+import { WhereData } from "./map/WhereData";
 
 
 
@@ -17,17 +19,17 @@ export const SqlBuilder = {
     let table_name = options.table;
     sqlBuilder.append(table_name);
     sqlBuilder.append(" from ");
-    buidlerTable(options, sqlBuilder, params);
-    buidlerWhere(options, sqlBuilder, params);
-    buidlerLimit(options, sqlBuilder, params);
+    this.buidlerTable(options, sqlBuilder);
+    this.buidlerWhere(options, sqlBuilder, params);
+    this.buidlerLimit(options, sqlBuilder);
     return new SqlData(sqlBuilder.toString(), params);
   },
 
-   getUpdateSql(options: QueryOptions): SqlData {
+  getUpdateSql(options: QueryOptions): SqlData {
     let sqlBuilder: StringBuilder = new StringBuilder();
     let params: Array<string> = [];
     sqlBuilder.append("update ");
-    buidlerTable(options, sqlBuilder, params);
+    this.buidlerTable(options, sqlBuilder);
     sqlBuilder.append(" set ");
     let fieldData: Map<String, String> = new Map()//options.?
     if (fieldData.size > 0) {
@@ -53,21 +55,21 @@ export const SqlBuilder = {
       });
       sqlBuilder.pop();
     }
-    buidlerWhere(query, sqlBuilder, params);
+    this.buidlerWhere(options, sqlBuilder, params);
     return new SqlData(sqlBuilder.toString(), params);
 
   },
 
-   getSelectSql( options: QueryOptions):SqlData {
+  getSelectSql(options: QueryOptions): SqlData {
     let sqlBuilder: StringBuilder = new StringBuilder();
     let params: Array<string> = [];
     sqlBuilder.append("select ");
     sqlBuilder.append(options.fields!.toString());
     sqlBuilder.append(" from ");
 
-    buidlerTable(options, sqlBuilder, params);
+    this.buidlerTable(options, sqlBuilder);
 
-    buidlerWhere(options, sqlBuilder, params);
+    this.buidlerWhere(options, sqlBuilder, params);
 
     if (options.hasOwnProperty("group")) {
       sqlBuilder.append(" group by ");
@@ -83,115 +85,121 @@ export const SqlBuilder = {
       sqlBuilder.append(options.order!.join(","));
     }
 
-    buidlerLimit(options, sqlBuilder, params);
+    this.buidlerLimit(options, sqlBuilder);
 
     return new SqlData(sqlBuilder.toString(), params);
   },
 
- getInsertAllSql(options: QueryOptions,list:Array<FieldData>):SqlData {
+  getInsertAllSql(options: QueryOptions, list: Array<FieldData>): SqlData {
     // query.data(list.get(0));
-    SqlData sqlData = getInsertSql(query);
-Object[] params = new Object[list.size()];
-
-for (int i = 0; i < list.size(); i++) {
-  List < Object > params_temp = new ArrayList<>();
-  for (Map.Entry < String, String > entry : list.get(i).getData().entrySet()) {
-    params_temp.add(entry.getValue());
-  }
-  params[i] = params_temp.toArray();
-}
-sqlData.setParams(params);
-return sqlData;
-
-  }
-
-  public static SqlData getInsertSql(Query query) {
-    StringBuilder sqlBuilder = new StringBuilder();
-  List < Object > params = new ArrayList<>();
-  sqlBuilder.append("insert into ");
-  sqlBuilder.append(query.getConfig().get("table").toString());
-  sqlBuilder.append(" (");
-  Map < String, String > fieldData = query.getFieldData().getData();
-    int l = fieldData.size();
-    int ii = 0;
-  for (Map.Entry < String, String > entry : fieldData.entrySet()) {
-
-    sqlBuilder.append(entry.getKey());
-    if (ii < l - 1) {
-      sqlBuilder.append(",");
+    let sqlData = this.getInsertSql(options);
+    let params: Array<Object> = [];
+    // Object[] params = new Object[list.size()];
+    for (let index = 0; index < list.length; index++) {
+      let params_temp: Array<Object> = []
+      for (const key in list[index]) {
+        params_temp.push(list[index][key])
+      }
+      params[index] = params_temp;
     }
-    params.add(entry.getValue());
-    ii++;
-  }
-  sqlBuilder.append(" ) VALUES (");
 
-  for (int i = 0; i < l; i++) {
-    sqlBuilder.append("?");
-    if (i < l - 1) {
-      sqlBuilder.append(",");
+    // for (int i = 0; i < list.size(); i++) {
+    //   List < Object > params_temp = new ArrayList<>();
+    //   for (Map.Entry < String, String > entry : list.get(i).getData().entrySet()) {
+    //     params_temp.add(entry.getValue());
+    //   }
+    //   params[i] = params_temp.toArray();
+    // }
+    sqlData.setParams(params);
+    return sqlData;
+
+  },
+
+  getInsertSql(options: QueryOptions): SqlData {
+    let fieldData: Map<String, String> = new Map();
+    if (fieldData.size > 0) {
+
+    let sqlBuilder: StringBuilder = new StringBuilder();
+    let params: Array<Object> = [];
+    sqlBuilder.append("insert into ");
+    sqlBuilder.append(options.table.toString());
+    sqlBuilder.append(" (");
+ 
+      for (const key in fieldData) {
+        sqlBuilder.append(key);
+        sqlBuilder.append(",");
+      }
+      sqlBuilder.pop();
+
+      sqlBuilder.append(" ) VALUES (");
+      for (const key in fieldData) {
+        sqlBuilder.append("?");
+        params.push(fieldData.get(key)!.toString());
+        sqlBuilder.append(",");
+      }
+      sqlBuilder.pop();
     }
+
+    sqlBuilder.append(")");
+    return new SqlData(sqlBuilder.toString(), params);
   }
-  sqlBuilder.append(")");
-  return new SqlData(sqlBuilder.toString(), params.toArray());
 
-}
+  },
 
-  private static void buidlerTable(Query query, StringBuilder sqlBuilder, List < Object > params) {
-    String table_name = query.getConfig().get("table").toString();
-  sqlBuilder.append(table_name);
-  if (query.getAlias() != null && query.getAlias().containsKey(table_name)) {
-    sqlBuilder.append(" as ");
-    sqlBuilder.append(query.getAlias().get(table_name));
+  buidlerTable(options: QueryOptions, sqlBuilder: StringBuilder) {
+    let table_name: string = options.table.toString();
+    sqlBuilder.append(table_name);
+    if (options.alias && options.alias.has(table_name)) {
+      sqlBuilder.append(" as ");
+      sqlBuilder.append(options.alias.get(table_name) as string);
 
-  }
-  sqlBuilder.append(" ");
-  if (query.getJoin() != null) {
-    List < String[] > joins = query.getJoin();
-    for (int i = 0; i < joins.size(); i++) {
-      sqlBuilder.append(" ");
-      String[] join_item = joins.get(i);
-      sqlBuilder.append(join_item[2]);
-      sqlBuilder.append(" join ");
-      sqlBuilder.append(join_item[0]);
-      sqlBuilder.append(" on ( ");
-      sqlBuilder.append(join_item[1]);
-      sqlBuilder.append(" ) ");
     }
-  }
-}
-
-  private static void buidlerLimit(Query query, StringBuilder sqlBuilder, List < Object > params) {
-  Map < String, String > config = query.getConfig();
-  if (config.containsKey("limit")) {
     sqlBuilder.append(" ");
-    sqlBuilder.append(config.get("limit").toString());
-  }
-}
-
-  private static void buidlerWhere(Query query, StringBuilder sqlBuilder, List < Object > params) {
-
-  if (query.getWhere() != null) {
-    sqlBuilder.append(" where 1=1  ");
-    Map < String, List < Object[] >> wheres = query.getWhere();
-    for (Map.Entry < String, List < Object[] >> entry : wheres.entrySet()) {
-      for (int i = 0; i < entry.getValue().size(); i++) {
-        sqlBuilder.append(entry.getKey().toString());
+    if (options.join) {
+      for (let i = 0; i < options.join.length; i++) {
         sqlBuilder.append(" ");
-        // sqlBuilder.append(entry.getKey().toString());
-        if (entry.getValue().get(i).length == 1) {
-          sqlBuilder.append(entry.getValue().get(i)[0].toString());
-        } else if (entry.getValue().get(i).length == 3) {
-          sqlBuilder.append(entry.getValue().get(i)[0].toString());
-
-          sqlBuilder.append(entry.getValue().get(i)[1].toString());
-          sqlBuilder.append("? ");
-          params.add(entry.getValue().get(i)[2].toString());
-        }
-        sqlBuilder.append(" ");
-
+        let item = options.join[i];
+        sqlBuilder.append(item.type);
+        sqlBuilder.append(" join ");
+        sqlBuilder.append(options.tablePre + item.name);
+        sqlBuilder.append(" on ( ");
+        sqlBuilder.append(item.condition);
+        sqlBuilder.append(" ) ");
       }
     }
+  },
+
+  buidlerLimit(options: QueryOptions, sqlBuilder: StringBuilder) {
+    if (options.limit && options.limit.length > 0) {
+      sqlBuilder.append(" ");
+      sqlBuilder.append(options.limit.toString());
+    }
+  },
+
+  buidlerWhereWithLogic(logic: QueryWhereLogic, list: Array<string | QueryWhereItem>, sqlBuilder: StringBuilder, params: Array<Object>) {
+    if (list.length > 0) {
+      list.forEach(item => {
+        sqlBuilder.append(logic).append(" ");
+        if (typeof item === "string") sqlBuilder.append(item);
+        else {
+          sqlBuilder.append(item.field);
+
+          sqlBuilder.append(item.op);
+          sqlBuilder.append("? ");
+          params.push(item.condition);
+          sqlBuilder.append(" ");
+        }
+      })
+    }
+  },
+
+  buidlerWhere(options: QueryOptions, sqlBuilder: StringBuilder, params: Array<Object>) {
+
+    if (options.where.and.length > 0 || options.where.or.length > 0) {
+      sqlBuilder.append(" where 1=1  ");
+      this.buidlerWhereWithLogic("and", options.where.and, sqlBuilder, params);
+      this.buidlerWhereWithLogic("or", options.where.or, sqlBuilder, params);
+    }
   }
-}
 
 }

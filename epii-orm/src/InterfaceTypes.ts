@@ -1,7 +1,7 @@
 import { SqlData } from "./SqlData";
 export type FunctionOrNull = Function | null;
 export type StringOrNull = string | null;
-export type QueryOptionsKeys = 'alias' | 'field' | 'group' | 'having';
+export type QueryOptionsKeys = 'alias' | 'fields' | 'group' | 'having';
 export type QueryJoinType = 'left' | 'right' | 'inner';
 export type BaseType = string | number | boolean ;
 export interface PlainObject {
@@ -30,7 +30,7 @@ export interface QueryOptions {
     tablePre:string,
     name:string,
     table:string,
-    alias?: StringOrNull,
+    alias?: Map<string,string>,
     fields?: StringOrNull,
     group?: StringOrNull,
     having?: StringOrNull,
@@ -39,7 +39,8 @@ export interface QueryOptions {
     where: {
         and: Array<QueryWhereItem | string>,
         or: Array<QueryWhereItem | string>,
-    }
+    },
+    limit:string
 }
 
 export interface IConnection {

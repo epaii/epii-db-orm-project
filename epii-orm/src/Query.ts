@@ -35,7 +35,7 @@ class Query {
         return this.setOption("alias", rename);
     }
     field(fieldString: string): Query {
-        return this.setOption("field", fieldString);
+        return this.setOption("fields", fieldString);
     }
     group(grouptring: string): Query {
         return this.setOption("group", grouptring);

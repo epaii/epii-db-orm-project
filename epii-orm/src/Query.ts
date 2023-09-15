@@ -11,7 +11,7 @@ class Query {
         name:"",
         table:"",
         alias: null,
-        field: "*",
+        fields: "*",
         join: [],
         where: {
             and: [],

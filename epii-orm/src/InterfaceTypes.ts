@@ -3,6 +3,12 @@ export type FunctionOrNull = Function | null;
 export type StringOrNull = string | null;
 export type QueryOptionsKeys = 'alias' | 'field' | 'group' | 'having';
 export type QueryJoinType = 'left' | 'right' | 'inner';
+export type BaseType = string | number | boolean ;
+export interface PlainObject {
+    [key:string]:BaseType
+}
+
+export type BaseMap = Map<String, BaseType>;
 export interface QueryJoinItem {
     name: string,
     condition: string,
@@ -25,10 +31,11 @@ export interface QueryOptions {
     name:string,
     table:string,
     alias?: StringOrNull,
-    field?: StringOrNull,
+    fields?: StringOrNull,
     group?: StringOrNull,
     having?: StringOrNull,
     join?: Array<QueryJoinItem>,
+    order?:Array<string>,
     where: {
         and: Array<QueryWhereItem | string>,
         or: Array<QueryWhereItem | string>,

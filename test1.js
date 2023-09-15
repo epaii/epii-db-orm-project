@@ -38,6 +38,6 @@ var BB = /** @class */ (function (_super) {
     return BB;
 }(AA));
 var vara = new AA(11);
-console.log(vara.pname());
+console.log(vara.pname().toString());
 var varb = new BB(11);
 console.log(varb.pname());

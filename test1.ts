@@ -11,7 +11,7 @@ class AA {
         return "zhagnsan";
     }
 
-    private pname(){
+     pname():string|undefined{
         return "p";
     }
 
@@ -22,9 +22,9 @@ class BB extends AA{
 }
 
 const vara:AA = new AA(11);
-console.log(vara.pname());
+console.log(vara.pname()!.toString());
 
 const varb:BB = new BB(11);
-console.log(varb.pname());
+console.log(varb!.pname());
 
 

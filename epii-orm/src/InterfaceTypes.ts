@@ -2,7 +2,7 @@ import { SqlData } from "./SqlData";
 import { FieldData } from "./map/FieldData";
 export type FunctionOrNull = Function | null;
 export type StringOrNull = string | null;
-export type QueryOptionsKeys = 'alias' | 'fields' | 'group' | 'having';
+export type QueryOptionsKeys =  'fields' | 'group' | 'having';
 export type QueryJoinType = 'left' | 'right' | 'inner';
 export type BaseType = string | number | boolean ;
 export type WhereSymbol = '>' | '>=' | '<' | '<=' | '!=' | '<>' | '!>' | '!<'
@@ -30,7 +30,8 @@ export interface QueryWhereItem {
 
 export type DbOrmConfig = {
     tablePrefix?: string,
-    connection: IConnection | null
+    connection: IConnection | null,
+    onSql?:Function|null
 }
 
 export interface QueryOptions {

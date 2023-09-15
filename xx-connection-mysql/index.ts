@@ -31,19 +31,19 @@ class XXConnectionMysql implements IConnection {
         }
 
     }
-    async insert(sqlData: SqlData): Promise<Number> {
+    async insert(sqlData: SqlData): Promise<number> {
         let resut = this.changeResult(await this.connectionHandler?.execute(sqlData.getSql(), sqlData.getParams()));
         return resut.insertId - 0;
     }
-    async update(sqlData: SqlData): Promise<Number> {
+    async update(sqlData: SqlData): Promise<number> {
         let resut = this.changeResult(await this.connectionHandler?.execute(sqlData.getSql(), sqlData.getParams()));
         return resut.changedRows - 0;
     }
-    async insertAll(sqlData: SqlData): Promise<Number> {
+    async insertAll(sqlData: SqlData): Promise<number> {
         let resut = this.changeResult(await this.connectionHandler?.execute(sqlData.getSql(), sqlData.getParams()));
         return resut.affectedRows - 0;
     }
-    async delete(sqlData: SqlData): Promise<Number> {
+    async delete(sqlData: SqlData): Promise<number> {
         let resut = this.changeResult(await this.connectionHandler?.execute(sqlData.getSql(), sqlData.getParams()));
         return resut.changedRows - 0;
     }

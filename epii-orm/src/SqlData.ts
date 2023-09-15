@@ -1,3 +1,5 @@
+import { Db, DbOrm } from "./Db";
+
 export type SqlDataParamsType = Array<any>;
 
 export class SqlData {
@@ -6,6 +8,10 @@ export class SqlData {
     constructor(sql: string, params: SqlDataParamsType) {
         this.sql = sql;
         this.params = params;
+        if (Db.config.onSql) {
+            Db.config.onSql(sql, params);
+        }
+
     }
     getSql(): string {
         return this.sql;

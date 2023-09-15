@@ -33,7 +33,7 @@ class Query {
     }
 
 
-    map<T>(fun: ArrayMapFunction<RowData, T>):Query {
+    map<T>(fun: ArrayMapFunction<RowData, T>): Query {
         this.rowMapFunction = fun;
         return this;
     }
@@ -45,7 +45,8 @@ class Query {
 
 
     alias(rename: string): Query {
-        return this.setOption("alias", rename);
+        this.options.alias?.set(this.options.table, rename);
+        return this;
     }
     field(fieldString: string): Query {
         return this.setOption("fields", fieldString);
@@ -89,7 +90,7 @@ class Query {
         return this;
     }
 
-    private mkWhere(logic: QueryWhereLogic, field: StringOrNull, op: string, condition: string):Query {
+    private mkWhere(logic: QueryWhereLogic, field: StringOrNull, op: string, condition: string): Query {
 
         if (field == null) {
             this.options.where[logic].push(condition);
@@ -206,9 +207,7 @@ class Query {
         }
         return this.db.config.connection!.insert(SqlBuilder.getInsertSql(this.options));
     }
-
-
-
+    
     insertAll(list: Array<PlainObject | FieldData>): Promise<number> {
         this.options.fieldDataList = list.map(item => {
             return item instanceof FieldData ? item : FieldData.make(item);

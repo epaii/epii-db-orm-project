@@ -88,7 +88,7 @@ export const SqlBuilder = {
     return new SqlData(sqlBuilder.toString(), params);
   },
 
-  getInsertAllSql(options: QueryOptions, list: Array<FieldData>): SqlData {
+  getInsertAllSql(options: QueryOptions): SqlData {
     let fieldDataList = options.fieldDataList;
     if (!fieldDataList || fieldDataList.length == 0) throw new Error("insert list data");
     let mapData = fieldDataList[0].mapData;

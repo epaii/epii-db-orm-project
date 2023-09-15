@@ -126,7 +126,7 @@ class Query {
             this.mkWhere(logic, fieldOrConditionOrWhereData.toString(), "=", value);
         return this;
     }
-    where(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull | number = null): Query {
+    where(fieldOrConditionOrWhereData: string | QueryWhereItem|WhereData, value: StringOrNull | number = null): Query {
         return this.mkWhereByCommon("and", fieldOrConditionOrWhereData,value?(value+""):null);
     }
 

@@ -33,31 +33,51 @@ var WhereData = /** @class */ (function () {
     // 包含 id in (1,2,3)
     WhereData.prototype.putIn = function (field, value) {
         var condition_sql = "";
-        condition_sql = "(" + value.toString() + ")";
-        this.expData.push(field + " in " + condition_sql);
+        if (typeof value[0] == "string") {
+            for (var index = 0; index < value.length; index++) {
+                condition_sql += "'" + value[index] + "'" + ",";
+            }
+        }
+        else {
+            for (var index = 0; index < value.length; index++) {
+                condition_sql += value[index].toString() + ",";
+            }
+        }
+        condition_sql = condition_sql.slice(0, condition_sql.length - 1);
+        this.expData.push(field + " in " + "(" + condition_sql + ")");
         return this;
     };
     //不包含  id not in (1,2,3)
     WhereData.prototype.putNotIn = function (field, value) {
         var condition_sql = "";
-        condition_sql = "(" + value.toString() + ")";
-        this.expData.push(field + " not in " + condition_sql);
+        if (typeof value[0] == "string") {
+            for (var index = 0; index < value.length; index++) {
+                condition_sql += "'" + value[index] + "'" + ",";
+            }
+        }
+        else {
+            for (var index = 0; index < value.length; index++) {
+                condition_sql += value[index].toString() + ",";
+            }
+        }
+        condition_sql = condition_sql.slice(0, condition_sql.length - 1);
+        this.expData.push(field + " not in " + "(" + condition_sql + ")");
         return this;
     };
-    // 有符号的 
+    // 有符号的
     WhereData.prototype.putSymbol = function (field, type, value) {
         this.expData.push(field + type + value);
         return this;
     };
     // 在范围之内
     WhereData.prototype.putBetween = function (field, sValue, eValue) {
-        var condition_sql = field + ' between ' + sValue + ' and ' + eValue;
+        var condition_sql = field + " between " + sValue + " and " + eValue;
         this.expData.push(condition_sql);
         return this;
     };
     // 不在范围之内
     WhereData.prototype.putNotBetween = function (field, sValue, eValue) {
-        var condition_sql = field + ' not between ' + sValue + ' and ' + eValue;
+        var condition_sql = field + " not between " + sValue + " and " + eValue;
         this.expData.push(condition_sql);
         return this;
     };
@@ -69,7 +89,8 @@ var WhereData = /** @class */ (function () {
 }());
 exports.WhereData = WhereData;
 var Where = new WhereData();
-console.log(Where);
-console.log(Where.make());
-// console.log( new WhereData().putIn("id",'1,2,3'))
-console.log(new WhereData().putNotBetween("id", '2', '5'));
+console.log(new WhereData().putIn("id", ["1", "2", "3"]));
+console.log(new WhereData().putIn("id", [1, 2, 3]));
+console.log(new WhereData().putNotIn("id", ["1", "2", "3"]));
+console.log(new WhereData().putNotIn("id", [1, 2, 3]));
+// console.log( new WhereData().putNotBetween("id",'2','5'))

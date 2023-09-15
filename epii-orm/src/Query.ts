@@ -1,7 +1,8 @@
 import { DbOrm } from "./Db";
-import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData, QueryOptions, QueryWhereLogic, QueryWhereItem, PlainObject, QueryOrderValue, BaseType, ArrayMapFunction, QueryMapFunction } from "./InterfaceTypes";
+import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData, QueryOptions, QueryWhereLogic, QueryWhereItem, PlainObject, QueryOrderValue, BaseType, ArrayMapFunction, QueryMapFunction, WhereSymbol } from "./InterfaceTypes";
 import { SqlBuilder } from "./SqlBuilder";
 import { FieldData } from "./map/FieldData";
+import { WhereData } from "./map/WhereData";
 
 
 
@@ -101,18 +102,31 @@ class Query {
     }
 
 
-    private mkWhereByCommon(logic: QueryWhereLogic, fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null): Query {
+    private mkWhereByCommon(logic: QueryWhereLogic, fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData, value: StringOrNull = null): Query {
         if (value === null) {
             if (typeof fieldOrConditionOrWhereData === "string") {
                 return this.mkWhere(logic, null, "", fieldOrConditionOrWhereData);
             } else {
-                this.options.where.and.push(fieldOrConditionOrWhereData);
+                if (fieldOrConditionOrWhereData instanceof WhereData) {
+                    if(fieldOrConditionOrWhereData.expData.length>0){
+                        fieldOrConditionOrWhereData.expData.forEach(item=>{
+                            this.options.where[logic].push(item.toString());
+
+                        })
+                    }
+                    if(fieldOrConditionOrWhereData.mapData.size>0){
+                        for (let [ key,item] of fieldOrConditionOrWhereData.mapData) {
+                            this.mkWhereByCommon(logic, key, item.toString());  
+                        }
+                    }
+                } else
+                    this.options.where[logic].push(fieldOrConditionOrWhereData);
             }
         } else
             this.mkWhere(logic, fieldOrConditionOrWhereData.toString(), "=", value);
         return this;
     }
-    where(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null): Query {
+    where(fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData, value: StringOrNull = null): Query {
         return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value);
     }
 
@@ -120,7 +134,7 @@ class Query {
         return this.where("id", id + "");
     }
 
-    whereOp(field: string, op: string, condition: string): Query {
+    whereOp(field: string, op: WhereSymbol, condition: string): Query {
         return this.where({ field, op, condition });
     }
 
@@ -207,7 +221,7 @@ class Query {
         }
         return this.db.config.connection!.insert(SqlBuilder.getInsertSql(this.options));
     }
-    
+
     insertAll(list: Array<PlainObject | FieldData>): Promise<number> {
         this.options.fieldDataList = list.map(item => {
             return item instanceof FieldData ? item : FieldData.make(item);

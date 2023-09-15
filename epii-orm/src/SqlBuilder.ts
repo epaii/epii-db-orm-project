@@ -1,10 +1,8 @@
 
-import { PlainMap, QueryOptions, QueryWhereItem, QueryWhereLogic } from "./InterfaceTypes";
-import { Query } from "./Query";
+import {  QueryOptions, QueryWhereItem, QueryWhereLogic } from "./InterfaceTypes";
 import { SqlData } from "./SqlData";
 import { StringBuilder } from "./libs/StringBuilder";
 import { FieldData } from "./map/FieldData";
-import { WhereData } from "./map/WhereData";
 
 
 
@@ -91,58 +89,67 @@ export const SqlBuilder = {
   },
 
   getInsertAllSql(options: QueryOptions, list: Array<FieldData>): SqlData {
-    // query.data(list.get(0));
-    let sqlData = this.getInsertSql(options);
-    let params: Array<Object> = [];
-    // Object[] params = new Object[list.size()];
-    for (let index = 0; index < list.length; index++) {
-      let params_temp: Array<Object> = []
-      for (const key in list[index]) {
-        params_temp.push(list[index][key])
-      }
-      params[index] = params_temp;
-    }
-
-    // for (int i = 0; i < list.size(); i++) {
-    //   List < Object > params_temp = new ArrayList<>();
-    //   for (Map.Entry < String, String > entry : list.get(i).getData().entrySet()) {
-    //     params_temp.add(entry.getValue());
-    //   }
-    //   params[i] = params_temp.toArray();
-    // }
-    sqlData.setParams(params);
-    return sqlData;
-
-  },
-
-  getInsertSql(options: QueryOptions): SqlData {
-    let fieldData: Map<String, String> = new Map();
-    if (fieldData.size > 0) {
-
+    let fieldDataList = options.fieldDataList;
+    if (!fieldDataList || fieldDataList.length == 0) throw new Error("insert list data");
+    let mapData = fieldDataList[0].mapData;
     let sqlBuilder: StringBuilder = new StringBuilder();
     let params: Array<Object> = [];
     sqlBuilder.append("insert into ");
     sqlBuilder.append(options.table.toString());
     sqlBuilder.append(" (");
- 
-      for (const key in fieldData) {
+    for (const key in mapData) {
+      sqlBuilder.append(key);
+      sqlBuilder.append(",");
+    }
+    sqlBuilder.pop();
+
+    sqlBuilder.append(" ) VALUES ");
+
+    fieldDataList?.forEach(fieldData => {
+      let mapData = fieldData.mapData;
+      sqlBuilder.append("(");
+      for (const key in mapData) {
+        sqlBuilder.append("?");
+        params.push(mapData.get(key)!.toString());
+        sqlBuilder.append(",");
+      }
+      sqlBuilder.pop();
+      sqlBuilder.append(")");
+      sqlBuilder.append(",");
+    })
+    return new SqlData(sqlBuilder.toString(), params);
+
+  },
+
+  getInsertSql(options: QueryOptions): SqlData {
+    let mapData = options.fieldData?.mapData;
+    if (mapData) {
+
+      let sqlBuilder: StringBuilder = new StringBuilder();
+      let params: Array<Object> = [];
+      sqlBuilder.append("insert into ");
+      sqlBuilder.append(options.table.toString());
+      sqlBuilder.append(" (");
+      for (const key in mapData) {
         sqlBuilder.append(key);
         sqlBuilder.append(",");
       }
       sqlBuilder.pop();
 
       sqlBuilder.append(" ) VALUES (");
-      for (const key in fieldData) {
+      for (const key in mapData) {
         sqlBuilder.append("?");
-        params.push(fieldData.get(key)!.toString());
+        params.push(mapData.get(key)!.toString());
         sqlBuilder.append(",");
       }
       sqlBuilder.pop();
+      sqlBuilder.append(")");
+      return new SqlData(sqlBuilder.toString(), params);
+    } else {
+      throw new Error("please set insert Data")
     }
 
-    sqlBuilder.append(")");
-    return new SqlData(sqlBuilder.toString(), params);
-  }
+
 
   },
 

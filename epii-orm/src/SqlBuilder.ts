@@ -1,20 +1,19 @@
-package epii.server.db;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import epii.server.db.map.FieldData;
-import epii.server.db.tools.Tools;
  
+import { QueryOptions } from "./InterfaceTypes";
+import { Query } from "./Query";
+import { StringBuilder } from "./libs/StringBuilder";
+ 
+  
 
-public class SqlBuilder {
 
-  public static SqlData getDeleteSql(Query query) {
-    StringBuilder sqlBuilder = new StringBuilder();
+
+export const SqlBuilder  = {
+
+  SqlData getDeleteSql( options:QueryOptions) {
+     let  sqlBuilder:StringBuilder = new StringBuilder();
     List<Object> params = new ArrayList<>();
     sqlBuilder.append("delete ");
-    String table_name = query.getConfig().get("table").toString();
+    String table_name = options.table;
     sqlBuilder.append(table_name);
     sqlBuilder.append(" from ");
     buidlerTable(query, sqlBuilder, params);
@@ -23,8 +22,8 @@ public class SqlBuilder {
     return new SqlData(sqlBuilder.toString(), params.toArray());
   }
 
-  public static SqlData getUpdateSql(Query query) {
-    StringBuilder sqlBuilder = new StringBuilder();
+     SqlData getUpdateSql(Query query) {
+    let  sqlBuilder:StringBuilder = new StringBuilder();
     List<Object> params = new ArrayList<>();
     sqlBuilder.append("update ");
     buidlerTable(query, sqlBuilder, params);

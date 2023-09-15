@@ -18,4 +18,15 @@ async function start() {
     console.log(rst1);
 }
 
+
+
+Db.config.tablePrefix = "wsl_"
+
+Db.config.connection = new XXConnectionMysql();
+
+
+
+let userinfo = await Db.name("test").where("name","张三")?.where({field:"age",op:">",condition:"5"})?.where( " age > 5 ")?.whereOp("age",">","5").find();
+Db.name("user").innsertAll([{name:"a",value:1},{name:"a",value:1}]);
+
 start();

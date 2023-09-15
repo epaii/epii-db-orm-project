@@ -13,6 +13,28 @@ export interface RowData {
     [key: string]:string
 }
 
+export type QueryWhereLogic = 'and' | 'or';
+export interface QueryWhereItem {
+    field: string,
+    op: string,
+    condition: string
+}
+
+export interface QueryOptions {
+    tablePre:string,
+    name:string,
+    table:string,
+    alias?: StringOrNull,
+    field?: StringOrNull,
+    group?: StringOrNull,
+    having?: StringOrNull,
+    join?: Array<QueryJoinItem>,
+    where: {
+        and: Array<QueryWhereItem | string>,
+        or: Array<QueryWhereItem | string>,
+    }
+}
+
 export interface IConnection {
     insert(sqlData: SqlData): Promise< Number>,
 

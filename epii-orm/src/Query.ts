@@ -1,29 +1,15 @@
 import { Db } from "./Db";
-import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData } from "./InterfaceTypes";
-type QueryWhereLogic = 'and' | 'or';
-interface QueryWhereItem {
-    field: string,
-    op: string,
-    condition: string
-}
+import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData, QueryOptions, QueryWhereLogic, QueryWhereItem } from "./InterfaceTypes";
 
-interface Options {
-    alias?: StringOrNull,
-    field?: StringOrNull,
-    group?: StringOrNull,
-    having?: StringOrNull,
-    join?: Array<QueryJoinItem>,
-    where: {
-        and: Array<QueryWhereItem | string>,
-        or: Array<QueryWhereItem | string>,
-    }
-}
 
 
 
 class Query {
 
-    options: Options = {
+    options: QueryOptions = {
+        tablePre:"",
+        name:"",
+        table:"",
         alias: null,
         field: "*",
         join: [],
@@ -34,7 +20,9 @@ class Query {
     }
 
     constructor(name: string, tablePre: string = "") {
-
+        this.options.name = name;
+        this.options.tablePre = tablePre;
+        this.options.table = tablePre+name;
     }
 
     setOption(key: QueryOptionsKeys, value: string): Query {
@@ -96,6 +84,10 @@ class Query {
         return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value);
     }
 
+    whereOp(field:string,op:string,condition:string){
+        return this.where({field,op,condition});
+    }
+
     whereOr(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null) {
         return this.mkWhereByCommon("or", fieldOrConditionOrWhereData, value);
     }
@@ -110,7 +102,7 @@ class Query {
 
     select(conditionOrWhereData: string | QueryWhereItem | null = null): Promise<Array<RowData>> {
         if(Db.config.connection !=null){
-            return Db.config.connection.select();
+            return Db.config.connection.select(SqlData.getsle(this.options));
         }
         
     }

@@ -2,8 +2,6 @@
 import { QueryOptions, QueryWhereItem, QueryWhereLogic } from "./InterfaceTypes";
 import { SqlData } from "./SqlData";
 import { StringBuilder } from "./libs/StringBuilder";
-import { FieldData } from "./map/FieldData";
-
 
 
 

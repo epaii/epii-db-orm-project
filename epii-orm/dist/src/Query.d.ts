@@ -1,22 +1,6 @@
-import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem } from "./InterfaceTypes";
-interface QueryWhereItem {
-    field: string;
-    op: string;
-    condition: string;
-}
-interface Options {
-    alias?: StringOrNull;
-    field?: StringOrNull;
-    group?: StringOrNull;
-    having?: StringOrNull;
-    join?: Array<QueryJoinItem>;
-    where: {
-        and: Array<QueryWhereItem | string>;
-        or: Array<QueryWhereItem | string>;
-    };
-}
+import { StringOrNull, QueryOptionsKeys, QueryJoinType, RowData, QueryOptions, QueryWhereItem } from "./InterfaceTypes";
 declare class Query {
-    options: Options;
+    options: QueryOptions;
     constructor(name: string, tablePre?: string);
     setOption(key: QueryOptionsKeys, value: string): Query;
     alias(rename: string): Query;
@@ -30,6 +14,10 @@ declare class Query {
     private mkWhere;
     private mkWhereByCommon;
     where(fieldOrConditionOrWhereData: string | QueryWhereItem, value?: StringOrNull): this | undefined;
+    whereOp(field: string, op: string, condition: string): this | undefined;
     whereOr(fieldOrConditionOrWhereData: string | QueryWhereItem, value?: StringOrNull): this | undefined;
+    whereLike(field: string, value: string): this;
+    whereBetween(field: string, start: Number, end: number): this;
+    select(conditionOrWhereData?: string | QueryWhereItem | null): Promise<Array<RowData>>;
 }
 export { Query };

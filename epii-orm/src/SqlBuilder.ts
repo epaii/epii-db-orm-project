@@ -86,10 +86,10 @@ export const SqlBuilder = {
     buidlerLimit(options, sqlBuilder, params);
 
     return new SqlData(sqlBuilder.toString(), params);
-  }
+  },
 
-  public static<T> SqlData getInsertAllSql(Query query, List<FieldData> list) {
-    query.data(list.get(0));
+ getInsertAllSql(options: QueryOptions,list:Array<FieldData>):SqlData {
+    // query.data(list.get(0));
     SqlData sqlData = getInsertSql(query);
 Object[] params = new Object[list.size()];
 

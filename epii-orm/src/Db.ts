@@ -1,17 +1,24 @@
-import { config, ConfigType } from "./libs/Config";
+
+import { DbOrmConfig } from "./InterfaceTypes";
 import { Query } from "./Query";
 
-const Db = {
-    config,
-    name(name: string): Query {
-        return new Query(name, config.tablePrefix);
-    },
-    table(name: string): Query {
-        return new Query(name, "");
-    },
-    setConfig(config: ConfigType) {
-        this.config = config;
+export class DbOrm {
+    config: DbOrmConfig = {
+        tablePrefix: "",
+        connection: null
     }
+    name(name: string): Query {
+        return new Query(this, name, this.config.tablePrefix);
+    }
+    table(name: string): Query {
+        return new Query(this, name, "");
+    }
+    constructor(config: DbOrmConfig | null = null) {
+        if (config != null)
+            this.config = config;
+    }
+
 }
 
-export { Db };
+export const Db = new DbOrm();
+

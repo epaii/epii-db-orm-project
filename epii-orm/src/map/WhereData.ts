@@ -61,7 +61,7 @@ export class WhereData{
         return this
     }
 
-    make(){
+    make():WhereData{
         let out = new WhereData();
         return out
     }

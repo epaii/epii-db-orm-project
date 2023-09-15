@@ -74,8 +74,8 @@ class Query {
     }
     limit(startOrLength: number, length: number | null = null): Query {
         if (length == null) {
-            startOrLength = 0;
             length = startOrLength;
+            startOrLength = 0;
         }
         this.options.limit = " limit " + startOrLength + "," + length;
         return this;
@@ -112,8 +112,8 @@ class Query {
             this.mkWhere(logic, fieldOrConditionOrWhereData.toString(), "=", value);
         return this;
     }
-    where(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null): Query {
-        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value);
+    where(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull | number = null): Query {
+        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData,value?(value+""):null);
     }
 
     whereId(id: number): Query {
@@ -133,7 +133,7 @@ class Query {
         return this.mkWhere("and", field, " like ", value);
     }
     whereBetween(field: string, start: Number, end: number): Query {
-        return this.mkWhere("and", field, " between ", start + " and " + end);
+        return this.where( field + " between " + start + " and " + end);
     }
 
     async select(conditionOrWhereDataOrQueryMapFunction: string | QueryWhereItem | QueryMapFunction | null = null): Promise<Array<RowData>> {
@@ -181,7 +181,7 @@ class Query {
         return null;
     }
 
-    async value(field: string, dvalue: StringOrNull): Promise<StringOrNull> {
+    async value(field: string, dvalue: StringOrNull=null): Promise<StringOrNull> {
         let info = await this.find();
         if (info == null) {
             return dvalue;
@@ -207,7 +207,7 @@ class Query {
         }
         return this.db.config.connection!.insert(SqlBuilder.getInsertSql(this.options));
     }
-    
+
     insertAll(list: Array<PlainObject | FieldData>): Promise<number> {
         this.options.fieldDataList = list.map(item => {
             return item instanceof FieldData ? item : FieldData.make(item);

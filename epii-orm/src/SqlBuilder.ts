@@ -1,5 +1,5 @@
 
-import {  QueryOptions, QueryWhereItem, QueryWhereLogic } from "./InterfaceTypes";
+import { QueryOptions, QueryWhereItem, QueryWhereLogic } from "./InterfaceTypes";
 import { SqlData } from "./SqlData";
 import { StringBuilder } from "./libs/StringBuilder";
 import { FieldData } from "./map/FieldData";
@@ -29,30 +29,39 @@ export const SqlBuilder = {
     sqlBuilder.append("update ");
     this.buidlerTable(options, sqlBuilder);
     sqlBuilder.append(" set ");
-    let fieldData: Map<String, String> = new Map()//options.?
-    if (fieldData.size > 0) {
-      for (const key in fieldData) {
-        sqlBuilder.append(key);
-        sqlBuilder.append("=?");
-        params.push(fieldData.get(key)!.toString());
-        sqlBuilder.append(", ");
+    let mapData = options.fieldData?.mapData;
+
+    if (mapData) {
+
+      if (mapData.size > 0) {
+        for (let [key] of mapData) {
+          sqlBuilder.append(key);
+          sqlBuilder.append("=?");
+          params.push(mapData.get(key)!.toString());
+          sqlBuilder.append(", ");
+        }
+        sqlBuilder.pop();
       }
-      sqlBuilder.pop();
     }
 
 
-    let fielExpData: string[] = [];//options?
-    if (fielExpData.length > 0) {
-      if (fieldData.size == 0) {
+
+
+    let expData =  options.fieldData?.expData;
+    if(expData && expData.length>0){
+      if ( mapData && mapData.size == 0) {
         sqlBuilder.append("  ");
       } else {
         sqlBuilder.append(", ");
       }
-      fielExpData.forEach(item => {
-        sqlBuilder.append(item);
+
+      expData.forEach(item => {
+        sqlBuilder.append(item.toString());
+        sqlBuilder.append(", ");
       });
       sqlBuilder.pop();
     }
+ 
     this.buidlerWhere(options, sqlBuilder, params);
     return new SqlData(sqlBuilder.toString(), params);
 
@@ -97,7 +106,7 @@ export const SqlBuilder = {
     sqlBuilder.append("insert into ");
     sqlBuilder.append(options.table.toString());
     sqlBuilder.append(" (");
-    for (let [ key ] of mapData) {
+    for (let [key] of mapData) {
       sqlBuilder.append(key);
       sqlBuilder.append(",");
     }
@@ -108,7 +117,7 @@ export const SqlBuilder = {
     fieldDataList?.forEach(fieldData => {
       let mapData = fieldData.mapData;
       sqlBuilder.append("(");
-      for (let [ key ] of mapData) {
+      for (let [key] of mapData) {
         sqlBuilder.append("?");
         params.push(mapData.get(key)!.toString());
         sqlBuilder.append(",");
@@ -117,13 +126,14 @@ export const SqlBuilder = {
       sqlBuilder.append(")");
       sqlBuilder.append(",");
     })
+    sqlBuilder.pop();
     return new SqlData(sqlBuilder.toString(), params);
 
   },
 
   getInsertSql(options: QueryOptions): SqlData {
-   // console.log(options);
-    
+    // console.log(options);
+
     let mapData = options.fieldData?.mapData;
     if (mapData) {
 
@@ -132,9 +142,9 @@ export const SqlBuilder = {
       sqlBuilder.append("insert into ");
       sqlBuilder.append(options.table.toString());
       sqlBuilder.append(" (");
-      
- 
-      for (let [ key ] of mapData) {
+
+
+      for (let [key] of mapData) {
 
         sqlBuilder.append(key);
         sqlBuilder.append(",");
@@ -142,7 +152,7 @@ export const SqlBuilder = {
       sqlBuilder.pop();
 
       sqlBuilder.append(" ) VALUES (");
-      for (let [ key ] of mapData) {
+      for (let [key] of mapData) {
         sqlBuilder.append("?");
         params.push(mapData.get(key)!.toString());
         sqlBuilder.append(",");

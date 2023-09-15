@@ -1,17 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Query = void 0;
+const Db_1 = require("./Db");
 class Query {
     constructor(name, tablePre = "") {
         this.options = {
+            tablePre: "",
+            name: "",
+            table: "",
             alias: null,
-            field: "*",
+            fields: "*",
             join: [],
             where: {
                 and: [],
                 or: []
             }
         };
+        this.options.name = name;
+        this.options.tablePre = tablePre;
+        this.options.table = tablePre + name;
     }
     setOption(key, value) {
         this.options[key] = value;
@@ -67,8 +74,22 @@ class Query {
     where(fieldOrConditionOrWhereData, value = null) {
         return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value);
     }
+    whereOp(field, op, condition) {
+        return this.where({ field, op, condition });
+    }
     whereOr(fieldOrConditionOrWhereData, value = null) {
         return this.mkWhereByCommon("or", fieldOrConditionOrWhereData, value);
+    }
+    whereLike(field, value) {
+        return this.mkWhere("and", field, " like ", value);
+    }
+    whereBetween(field, start, end) {
+        return this.mkWhere("and", field, " between ", start + " and " + end);
+    }
+    select(conditionOrWhereData = null) {
+        if (Db_1.Db.config.connection != null) {
+            return Db_1.Db.config.connection.select(SqlData.getsle(this.options));
+        }
     }
 }
 exports.Query = Query;

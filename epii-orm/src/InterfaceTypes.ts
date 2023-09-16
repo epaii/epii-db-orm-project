@@ -29,9 +29,9 @@ export interface QueryWhereItem {
 }
 
 export type DbOrmConfig = {
-    tablePrefix?: string,
+    tablePrefix: string,
     connection: IConnection | null,
-    onSql?: Function | null
+    onSql: Function | null
 }
 
 export interface QueryOptions {

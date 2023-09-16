@@ -36,8 +36,17 @@ async function start() {
     //     return item.name+'--';
     // })
     // let list = await Db.name("test_xlx").where('name','aaaa').update({name:"ceshi0"})
-       await Db.name("test_xlx").whereOp("id",">","1").update({value:"123465"})
-    
+      // await Db.name("test_xlx").whereOp("id",">","1").update({value:"123465"})
+
+      type TestXlx ={
+         id:number,
+         name:string,
+         value:string;
+      }
+
+      let xlx:TestXlx|null = await Db.name("test_xlx").find<TestXlx>();
+      console.log(xlx!.id);
+      
     
     
     

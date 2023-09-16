@@ -1,5 +1,5 @@
-import { FunctionOrNull, IConnection, RowData } from "../epii-orm/src/InterfaceTypes";
-import { SqlData } from "../epii-orm/src/SqlData";
+import { FunctionOrNull, IConnection, RowData,SqlData } from "epii-orm";
+
 import mysql from "mysql2/promise";
 
 

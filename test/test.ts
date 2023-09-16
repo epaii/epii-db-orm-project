@@ -1,7 +1,7 @@
 
 
 import { Db } from '../epii-orm';
-import { XXConnectionMysql } from '../xx-connection-mysql';
+import { XXConnectionMysql } from '../xx-connection-mysql/src';
 import { DbInit } from './db.init';
 
 async function start() {

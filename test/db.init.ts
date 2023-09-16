@@ -1,5 +1,5 @@
 import { Db } from "../epii-orm";
-import { XXConnectionMysql } from "../xx-connection-mysql";
+import { XXConnectionMysql } from "../xx-connection-mysql/src";
 
 export async function DbInit() {
     const connectionMysql = await new XXConnectionMysql({

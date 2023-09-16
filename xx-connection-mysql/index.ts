@@ -10,6 +10,12 @@ class XXConnectionMysql implements IConnection {
     constructor(options: mysql.ConnectionOptions) {
         this.options = options;
     }
+    async query<T = any>(sql: string, params: (string | number)[] = []): Promise<T> {
+        return await this.connectionHandler?.query(sql, params)
+    }
+    async execute<T = any>(sql: string, params: (string | number)[] = []): Promise<T> {
+        return await this.connectionHandler?.execute(sql, params)
+    }
     getConnection(): mysql.Connection | null {
         return this.connectionHandler;
     }

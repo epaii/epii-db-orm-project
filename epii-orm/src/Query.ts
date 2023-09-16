@@ -150,7 +150,7 @@ class Query {
         return this.where( field + " between " + start + " and " + end);
     }
 
-    async select(conditionOrWhereDataOrQueryMapFunction: string | QueryWhereItem | QueryMapFunction | null = null): Promise<Array<RowData>> {
+    async select<T=RowData>(conditionOrWhereDataOrQueryMapFunction: string | QueryWhereItem | QueryMapFunction | null = null): Promise<Array<T>> {
         if (conditionOrWhereDataOrQueryMapFunction != null) {
             if (typeof conditionOrWhereDataOrQueryMapFunction === "function") {
                 this.rowMapFunction = conditionOrWhereDataOrQueryMapFunction;
@@ -159,29 +159,29 @@ class Query {
         }
         let list = await this.db.config.connection!.select(SqlBuilder.getSelectSql(this.options));
         if (this.rowMapFunction != null) {
-            let outlist: Array<RowData> = [];
+            let outlist: Array<T> = [];
             for (let index = 0; index < list.length; index++) {
                 const element = list[index];
                 outlist.push(await this.rowMapFunction(element, index));
             }
             return outlist;
         } else {
-            return list;
+            return list as T[];
         }
 
     }
 
-    async selectForMap(key: string = "id", field: string | null = null): Promise<Map<string | number, RowData | string>> {
-        let list = await this.select();
-        let outMap: Map<string | number, RowData | string> = new Map();
-        list.forEach(item => {
+    async selectForMap<T extends Record<string,any> = RowData>(key: string = "id", field: string | null = null): Promise<Map<string | number, T | string>> {
+        let list = await this.select<T>();
+        let outMap: Map<string | number, T | string> = new Map();
+        list.forEach((item:T) => {
             outMap.set(key === "id" ? (parseInt(item[key])) : item[key].toString(), field == null ? item : item[field].toString());
         })
-        return outMap;
+        return outMap ;
     }
 
 
-    async find(conditionOrWhereData: string | QueryWhereItem | number | null = null): Promise<RowData | null> {
+    async find<T extends Record<string,any> = RowData>(conditionOrWhereData: string | QueryWhereItem | number | null = null): Promise<T | null> {
         if (conditionOrWhereData != null) {
             if (typeof conditionOrWhereData === "number") {
                 this.where("id", conditionOrWhereData + "")
@@ -190,7 +190,7 @@ class Query {
             }
         }
         this.limit(1);
-        let list = await this.select();
+        let list = await this.select<T>();
         if (list.length > 0) return list[0];
         return null;
     }

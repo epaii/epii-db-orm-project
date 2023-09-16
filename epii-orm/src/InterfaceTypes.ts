@@ -2,9 +2,9 @@ import { SqlData } from "./SqlData";
 import { FieldData } from "./map/FieldData";
 export type FunctionOrNull = Function | null;
 export type StringOrNull = string | null;
-export type QueryOptionsKeys =  'fields' | 'group' | 'having';
+
 export type QueryJoinType = 'left' | 'right' | 'inner';
-export type BaseType = string | number | boolean ;
+export type BaseType = string | number | boolean;
 export type WhereSymbol = '>' | '>=' | '<' | '<=' | '!=' | '<>' | '!>' | '!<'
 export interface PlainObject {
     [key: string]: BaseType
@@ -17,9 +17,9 @@ export interface QueryJoinItem {
     type: QueryJoinType
 }
 
-export interface RowData {
-    [key: string]: string
-}
+
+
+export type RowData = Record<string, string>;
 
 export type QueryWhereLogic = 'and' | 'or';
 export interface QueryWhereItem {
@@ -31,14 +31,14 @@ export interface QueryWhereItem {
 export type DbOrmConfig = {
     tablePrefix?: string,
     connection: IConnection | null,
-    onSql?:Function|null
+    onSql?: Function | null
 }
 
 export interface QueryOptions {
-    tablePre:string,
-    name:string,
-    table:string,
-    alias?: Map<string,string>,
+    tablePre: string,
+    name: string,
+    table: string,
+    alias?: Map<string, string>,
     fields?: StringOrNull,
     fieldData?: FieldData,
     fieldDataList?: Array<FieldData>,
@@ -53,6 +53,8 @@ export interface QueryOptions {
     }
 }
 
+export type QueryOptionsKeys = 'fields' | 'group' | 'having';
+
 export interface IConnection {
     insert(sqlData: SqlData): Promise<number>,
 
@@ -62,7 +64,9 @@ export interface IConnection {
 
     select(sqlData: SqlData): Promise<Array<RowData>>;
     insertAll(sqlData: SqlData): Promise<number>;
-    delete(deleteSql: SqlData): Promise<number>
+    delete(deleteSql: SqlData): Promise<number>;
+    query<T = any>(sql: string, params: Array<string | number>): Promise<T>;
+    execute<T = any>(sql: string, params: Array<string | number>): Promise<T>;
 }
 
 export type QueryOrderValue = 'desc' | 'asc';
@@ -71,5 +75,5 @@ export interface ArrayMapFunction<S, T> {
     (item: S, index: number): Promise<T>
 }
 
-export type QueryMapFunction = ArrayMapFunction<RowData,RowData>;
+export type QueryMapFunction = ArrayMapFunction<RowData, RowData>;
 

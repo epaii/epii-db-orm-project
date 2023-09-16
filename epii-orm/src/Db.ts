@@ -17,6 +17,11 @@ export class DbOrm {
         if (config != null)
             this.config = config;
     }
+    query(){
+        
+    }
+
+
 
 }
 

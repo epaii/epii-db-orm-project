@@ -22,6 +22,7 @@ declare class Query {
     private mkWhere;
     private mkWhereByCommon;
     where(fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData, value?: StringOrNull | number): Query;
+    whereIn(field: string, value: Array<string | Number>): Query;
     whereId(id: number): Query;
     whereOp(field: string, op: WhereSymbol, condition: string): Query;
     whereOr(fieldOrConditionOrWhereData: string | QueryWhereItem, value?: StringOrNull): Query;

@@ -1,15 +1,16 @@
 import { BaseMap, PlainObject, WhereSymbol } from "../InterfaceTypes";
 export declare class WhereData {
     mapData: BaseMap;
-    expData: Array<String>;
+    expData: Array<string>;
     private initData;
     constructor(initData?: PlainObject | BaseMap | null);
-    putExp(field: String, exp: String): WhereData;
-    putLike(field: String, value: String): WhereData;
-    putIn(field: String, value: Array<String | Number>): WhereData;
-    putNotIn(field: String, value: Array<String | Number>): WhereData;
-    putSymbol(field: String, type: WhereSymbol, value: String): WhereData;
-    putBetween(field: String, sValue: String, eValue: String): WhereData;
-    putNotBetween(field: String, sValue: String, eValue: String): WhereData;
-    static make(keyOrData: string | null | undefined, value: String): WhereData;
+    put(field: string, value: string): WhereData;
+    putExp(field: string, exp: string): WhereData;
+    putLike(field: string, value: string): WhereData;
+    putIn(field: string, value: Array<string | Number>): WhereData;
+    putNotIn(field: string, value: Array<string | Number>): WhereData;
+    putSymbol(field: string, type: WhereSymbol, value: string): WhereData;
+    putBetween(field: string, sValue: string, eValue: string): WhereData;
+    putNotBetween(field: string, sValue: string, eValue: string): WhereData;
+    static make(keyOrData: string | null | undefined, value: string): WhereData;
 }

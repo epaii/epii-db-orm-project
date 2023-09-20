@@ -57,6 +57,6 @@ export interface IConnection {
 }
 export type QueryOrderValue = 'desc' | 'asc';
 export interface ArrayMapFunction<S, T> {
-    (item: S, index: number): Promise<T>;
+    (item: S, index: number): Promise<T> | T;
 }
-export type QueryMapFunction = ArrayMapFunction<RowData, RowData>;
+export type QueryMapFunction<D = any> = ArrayMapFunction<RowData, D>;

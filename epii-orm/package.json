@@ -2,7 +2,7 @@
   "name": "epii-db-orm",
   "version": "1.0.2",
   "description": "",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc"
   },

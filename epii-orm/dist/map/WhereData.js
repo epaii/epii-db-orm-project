@@ -21,6 +21,10 @@ class WhereData {
             return;
         this.initData(initData);
     }
+    put(field, value) {
+        this.mapData.set(field, value);
+        return this;
+    }
     putExp(field, exp) {
         this.expData.push(field + " = " + exp);
         return this;

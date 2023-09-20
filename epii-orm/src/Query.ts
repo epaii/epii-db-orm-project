@@ -130,6 +130,10 @@ class Query {
         return this.mkWhereByCommon("and", fieldOrConditionOrWhereData,value?(value+""):null);
     }
 
+    whereIn(field: string, value: Array<string | Number>){
+       return this.where(new WhereData().putIn(field,value)); 
+    }
+
     whereId(id: number): Query {
         return this.where("id", id + "");
     }

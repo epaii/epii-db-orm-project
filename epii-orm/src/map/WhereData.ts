@@ -2,7 +2,7 @@ import { BaseMap, PlainObject, WhereSymbol } from "../InterfaceTypes";
 
 export class WhereData {
   mapData: BaseMap = new Map();
-  expData: Array<String> = [];
+  expData: Array<string> = [];
   private initData(initData: PlainObject | BaseMap) {
     if (initData instanceof Map) {
       this.mapData = initData;
@@ -18,16 +18,20 @@ export class WhereData {
     if (initData === null) return;
     this.initData(initData);
   }
-  putExp(field: String, exp: String): WhereData {
+  put(field: string, value: string):WhereData{
+    this.mapData.set(field,value);
+    return this;
+  }
+  putExp(field: string, exp: string): WhereData {
     this.expData.push(field + " = " + exp);
     return this;
   }
-  putLike(field: String, value: String): WhereData {
+  putLike(field: string, value: string): WhereData {
     this.expData.push(field + " like '" + value + "'");
     return this;
   }
   // 包含 id in (1,2,3)
-  putIn(field: String, value: Array<String | Number>): WhereData {
+  putIn(field: string, value: Array<string | Number>): WhereData {
     let condition_sql = "";
 
     if (typeof value[0] == "string") {
@@ -44,7 +48,7 @@ export class WhereData {
     return this;
   }
   //不包含  id not in (1,2,3)
-  putNotIn(field: String, value: Array<String | Number>): WhereData {
+  putNotIn(field: string, value: Array<string | Number>): WhereData {
     let condition_sql = "";
 
     if (typeof value[0] == "string") {
@@ -62,26 +66,26 @@ export class WhereData {
   }
 
   // 有符号的
-  putSymbol(field: String, type: WhereSymbol, value: String): WhereData {
+  putSymbol(field: string, type: WhereSymbol, value: string): WhereData {
     this.expData.push(field + type + value);
     return this;
   }
 
   // 在范围之内
-  putBetween(field: String, sValue: String, eValue: String): WhereData {
+  putBetween(field: string, sValue: string, eValue: string): WhereData {
     let condition_sql = field + " between " + sValue + " and " + eValue;
     this.expData.push(condition_sql);
     return this;
   }
 
   // 不在范围之内
-  putNotBetween(field: String, sValue: String, eValue: String): WhereData {
+  putNotBetween(field: string, sValue: string, eValue: string): WhereData {
     let condition_sql = field + " not between " + sValue + " and " + eValue;
     this.expData.push(condition_sql);
     return this;
   }
 
-  static make(keyOrData: string | null = null, value: String): WhereData {
+  static make(keyOrData: string | null = null, value: string): WhereData {
     let out = new WhereData();
     if (keyOrData != null) {
       out.putExp(keyOrData, value);

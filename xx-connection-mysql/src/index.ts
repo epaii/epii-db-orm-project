@@ -1,13 +1,13 @@
-import { FunctionOrNull, IConnection, RowData,SqlData } from "epii-orm";
+import { FunctionOrNull, IConnection, RowData, SqlData } from "epii-orm";
 
 import mysql from "mysql2/promise";
 
 
 
 class XXConnectionMysql implements IConnection {
-    connectionHandler: mysql.Connection | null = null;
+    connectionHandler: mysql.Pool | null = null;
     options: mysql.ConnectionOptions;
-    constructor(options: mysql.ConnectionOptions) {
+    constructor(options: mysql.PoolOptions) {
         this.options = options;
     }
     async query<T = any>(sql: string, params: (string | number)[] = []): Promise<T> {
@@ -19,16 +19,16 @@ class XXConnectionMysql implements IConnection {
     getConnection(): mysql.Connection | null {
         return this.connectionHandler;
     }
-    async connection(): Promise<mysql.Connection | null> {
+    connection(): mysql.Pool | null {
         if (this.connectionHandler == null) {
-            this.connectionHandler = await mysql.createConnection(this.options);
+            this.connectionHandler = mysql.createPool(this.options);
         }
         return this.connectionHandler;
     }
     then: FunctionOrNull = async (r: Function, reject: Function) => {
         try {
             if (this.connectionHandler == null) {
-                this.connectionHandler = await mysql.createConnection(this.options);
+                this.connectionHandler = this.connection();
             }
             this.then = null;
             r(this)

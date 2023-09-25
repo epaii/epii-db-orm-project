@@ -7,6 +7,7 @@ export async function DbInit() {
         user: "inner_test_dbu",
         password: "oO8JJXJJvT2rNsnO",
         database: "inner_test",
+        connectionLimit:5
     });
     Db.initialization({
         tablePrefix: "wsl_",

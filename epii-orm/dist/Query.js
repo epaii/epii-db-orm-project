@@ -92,7 +92,7 @@ class Query {
             this.options.where[logic].push(condition);
         }
         else {
-            this.options.where[logic].push({ field, op, condition });
+            this.options.where[logic].push({ field, op, condition, typeIdentify: "QueryWhereItem" });
         }
         return this;
     }
@@ -114,8 +114,14 @@ class Query {
                         }
                     }
                 }
-                else
-                    this.options.where[logic].push(fieldOrConditionOrWhereData);
+                else {
+                    if (fieldOrConditionOrWhereData.typeIdentify === "QueryWhereItem") {
+                        this.options.where[logic].push(fieldOrConditionOrWhereData);
+                    }
+                    else {
+                        this.where(new WhereData_1.WhereData(fieldOrConditionOrWhereData));
+                    }
+                }
             }
         }
         else
@@ -132,7 +138,7 @@ class Query {
         return this.where("id", id + "");
     }
     whereOp(field, op, condition) {
-        return this.where({ field, op, condition });
+        return this.where({ field, op, condition, typeIdentify: "QueryWhereItem" });
     }
     whereOr(fieldOrConditionOrWhereData, value = null) {
         return this.mkWhereByCommon("or", fieldOrConditionOrWhereData, value);

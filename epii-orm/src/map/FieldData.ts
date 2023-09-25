@@ -54,6 +54,4 @@ export class FieldData {
     }
 }
 
-console.log(new FieldData)
-
  

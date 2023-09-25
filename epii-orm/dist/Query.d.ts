@@ -1,5 +1,5 @@
 import { DbOrm } from "./Db";
-import { StringOrNull, QueryOptionsKeys, QueryJoinType, RowData, QueryOptions, QueryWhereItem, PlainObject, QueryOrderValue, ArrayMapFunction, QueryMapFunction, WhereSymbol } from "./InterfaceTypes";
+import { StringOrNull, QueryOptionsKeys, QueryJoinType, RowData, QueryOptions, QueryWhereItem, PlainObject, QueryOrderValue, ArrayMapFunction, QueryMapFunction, WhereSymbol, BaseMap } from "./InterfaceTypes";
 import { FieldData } from "./map/FieldData";
 import { WhereData } from "./map/WhereData";
 declare class Query {
@@ -21,7 +21,7 @@ declare class Query {
     order(fieldOrder: string, order: QueryOrderValue | null): Query;
     private mkWhere;
     private mkWhereByCommon;
-    where(fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData, value?: StringOrNull | number): Query;
+    where(fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData | BaseMap, value?: StringOrNull | number): Query;
     whereIn(field: string, value: Array<string | Number>): Query;
     whereId(id: number): Query;
     whereOp(field: string, op: WhereSymbol, condition: string): Query;

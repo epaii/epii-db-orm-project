@@ -25,7 +25,8 @@ export type QueryWhereLogic = 'and' | 'or';
 export interface QueryWhereItem {
     field: string,
     op: string,
-    condition: string
+    condition: string,
+    typeIdentify:"QueryWhereItem"
 }
 
 export type DbOrmConfig = {

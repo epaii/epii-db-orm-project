@@ -1,5 +1,5 @@
 import { DbOrm } from "./Db";
-import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData, QueryOptions, QueryWhereLogic, QueryWhereItem, PlainObject, QueryOrderValue, BaseType, ArrayMapFunction, QueryMapFunction, WhereSymbol } from "./InterfaceTypes";
+import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData, QueryOptions, QueryWhereLogic, QueryWhereItem, PlainObject, QueryOrderValue, BaseType, ArrayMapFunction, QueryMapFunction, WhereSymbol, BaseMap } from "./InterfaceTypes";
 import { SqlBuilder } from "./SqlBuilder";
 import { FieldData } from "./map/FieldData";
 import { WhereData } from "./map/WhereData";
@@ -96,42 +96,48 @@ class Query {
         if (field == null) {
             this.options.where[logic].push(condition);
         } else {
-            this.options.where[logic].push({ field, op, condition });
+            this.options.where[logic].push({ field, op, condition,typeIdentify:"QueryWhereItem" });
         }
         return this;
     }
 
 
-    private mkWhereByCommon(logic: QueryWhereLogic, fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData, value: StringOrNull = null): Query {
+    private mkWhereByCommon(logic: QueryWhereLogic, fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData | BaseMap, value: StringOrNull = null): Query {
         if (value === null) {
             if (typeof fieldOrConditionOrWhereData === "string") {
                 return this.mkWhere(logic, null, "", fieldOrConditionOrWhereData);
             } else {
                 if (fieldOrConditionOrWhereData instanceof WhereData) {
-                    if(fieldOrConditionOrWhereData.expData.length>0){
-                        fieldOrConditionOrWhereData.expData.forEach(item=>{
+                    if (fieldOrConditionOrWhereData.expData.length > 0) {
+                        fieldOrConditionOrWhereData.expData.forEach(item => {
                             this.options.where[logic].push(item.toString());
 
                         })
                     }
-                    if(fieldOrConditionOrWhereData.mapData.size>0){
-                        for (let [ key,item] of fieldOrConditionOrWhereData.mapData) {
-                            this.mkWhereByCommon(logic, key, item.toString());  
+                    if (fieldOrConditionOrWhereData.mapData.size > 0) {
+                        for (let [key, item] of fieldOrConditionOrWhereData.mapData) {
+                            this.mkWhereByCommon(logic, key, item.toString());
                         }
                     }
-                } else
-                    this.options.where[logic].push(fieldOrConditionOrWhereData);
+                } else {
+                    if ((fieldOrConditionOrWhereData as QueryWhereItem).typeIdentify === "QueryWhereItem") {
+                        this.options.where[logic].push(fieldOrConditionOrWhereData as QueryWhereItem);
+                    } else {
+                        this.where(new WhereData(fieldOrConditionOrWhereData as BaseMap));
+                    }
+                }
+
             }
         } else
             this.mkWhere(logic, fieldOrConditionOrWhereData.toString(), "=", value);
         return this;
     }
-    where(fieldOrConditionOrWhereData: string | QueryWhereItem|WhereData, value: StringOrNull | number = null): Query {
-        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData,value?(value+""):null);
+    where(fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData | BaseMap, value: StringOrNull | number = null): Query {
+        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value ? (value + "") : null);
     }
 
-    whereIn(field: string, value: Array<string | Number>){
-       return this.where(new WhereData().putIn(field,value)); 
+    whereIn(field: string, value: Array<string | Number>) {
+        return this.where(new WhereData().putIn(field, value));
     }
 
     whereId(id: number): Query {
@@ -139,7 +145,7 @@ class Query {
     }
 
     whereOp(field: string, op: WhereSymbol, condition: string): Query {
-        return this.where({ field, op, condition });
+        return this.where({ field, op, condition ,typeIdentify:"QueryWhereItem"});
     }
 
     whereOr(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null): Query {
@@ -151,10 +157,10 @@ class Query {
         return this.mkWhere("and", field, " like ", value);
     }
     whereBetween(field: string, start: Number, end: number): Query {
-        return this.where( field + " between " + start + " and " + end);
+        return this.where(field + " between " + start + " and " + end);
     }
 
-    async select<T=RowData>(conditionOrWhereDataOrQueryMapFunction: string | QueryWhereItem | QueryMapFunction | null = null): Promise<Array<T>> {
+    async select<T = RowData>(conditionOrWhereDataOrQueryMapFunction: string | QueryWhereItem | QueryMapFunction | null = null): Promise<Array<T>> {
         if (conditionOrWhereDataOrQueryMapFunction != null) {
             if (typeof conditionOrWhereDataOrQueryMapFunction === "function") {
                 this.rowMapFunction = conditionOrWhereDataOrQueryMapFunction;
@@ -175,17 +181,17 @@ class Query {
 
     }
 
-    async selectForMap<T extends Record<string,any> = RowData>(key: string = "id", field: string | null = null): Promise<Map<string | number, T | string>> {
+    async selectForMap<T extends Record<string, any> = RowData>(key: string = "id", field: string | null = null): Promise<Map<string | number, T | string>> {
         let list = await this.select<T>();
         let outMap: Map<string | number, T | string> = new Map();
-        list.forEach((item:T) => {
+        list.forEach((item: T) => {
             outMap.set(key === "id" ? (parseInt(item[key])) : item[key].toString(), field == null ? item : item[field].toString());
         })
-        return outMap ;
+        return outMap;
     }
 
 
-    async find<T extends Record<string,any> = RowData>(conditionOrWhereData: string | QueryWhereItem | number | null = null): Promise<T | null> {
+    async find<T extends Record<string, any> = RowData>(conditionOrWhereData: string | QueryWhereItem | number | null = null): Promise<T | null> {
         if (conditionOrWhereData != null) {
             if (typeof conditionOrWhereData === "number") {
                 this.where("id", conditionOrWhereData + "")
@@ -199,7 +205,7 @@ class Query {
         return null;
     }
 
-    async value(field: string, dvalue: StringOrNull=null): Promise<StringOrNull> {
+    async value(field: string, dvalue: StringOrNull = null): Promise<StringOrNull> {
         let info = await this.find();
         if (info == null) {
             return dvalue;

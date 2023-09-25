@@ -51,4 +51,3 @@ class FieldData {
     }
 }
 exports.FieldData = FieldData;
-console.log(new FieldData);

@@ -20,6 +20,7 @@ export interface QueryWhereItem {
     field: string;
     op: string;
     condition: string;
+    typeIdentify: "QueryWhereItem";
 }
 export type DbOrmConfig = {
     tablePrefix: string;

@@ -1,13 +1,13 @@
 import { FunctionOrNull, IConnection, RowData, SqlData } from "epii-orm";
 import mysql from "mysql2/promise";
 declare class XXConnectionMysql implements IConnection {
-    connectionHandler: mysql.Connection | null;
+    connectionHandler: mysql.Pool | null;
     options: mysql.ConnectionOptions;
-    constructor(options: mysql.ConnectionOptions);
+    constructor(options: mysql.PoolOptions);
     query<T = any>(sql: string, params?: (string | number)[]): Promise<T>;
     execute<T = any>(sql: string, params?: (string | number)[]): Promise<T>;
     getConnection(): mysql.Connection | null;
-    connection(): Promise<mysql.Connection | null>;
+    connection(): mysql.Pool | null;
     then: FunctionOrNull;
     insert(sqlData: SqlData): Promise<number>;
     update(sqlData: SqlData): Promise<number>;

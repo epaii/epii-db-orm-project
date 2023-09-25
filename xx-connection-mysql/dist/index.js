@@ -20,7 +20,7 @@ class XXConnectionMysql {
         this.then = (r, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 if (this.connectionHandler == null) {
-                    this.connectionHandler = yield promise_1.default.createConnection(this.options);
+                    this.connectionHandler = this.connection();
                 }
                 this.then = null;
                 r(this);
@@ -47,12 +47,10 @@ class XXConnectionMysql {
         return this.connectionHandler;
     }
     connection() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.connectionHandler == null) {
-                this.connectionHandler = yield promise_1.default.createConnection(this.options);
-            }
-            return this.connectionHandler;
-        });
+        if (this.connectionHandler == null) {
+            this.connectionHandler = promise_1.default.createPool(this.options);
+        }
+        return this.connectionHandler;
     }
     insert(sqlData) {
         var _a;

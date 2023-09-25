@@ -238,5 +238,15 @@ class Query {
         }
         return this.db.config.connection.delete(SqlBuilder_1.SqlBuilder.getDeleteSql(this.options));
     }
+    count() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return parseInt((yield this.field(" count(*) as _total_num ").value("_total_num"))) - 0;
+        });
+    }
+    column(field) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.select()).map(item => item[field]);
+        });
+    }
 }
 exports.Query = Query;

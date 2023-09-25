@@ -37,5 +37,7 @@ declare class Query {
     insert(data?: PlainObject | FieldData | null): Promise<number>;
     insertAll(list: Array<PlainObject | FieldData>): Promise<number>;
     delete(id?: number | null): Promise<number>;
+    count(): Promise<number>;
+    column(field: string): Promise<string[]>;
 }
 export { Query };

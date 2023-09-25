@@ -60,8 +60,7 @@ async function start() {
     
     
     
-       let list = await Db.name('test_xlx').select();
-    console.log(list);
+    
 }
 
 

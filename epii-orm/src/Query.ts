@@ -96,7 +96,7 @@ class Query {
         if (field == null) {
             this.options.where[logic].push(condition);
         } else {
-            this.options.where[logic].push({ field, op, condition,typeIdentify:"QueryWhereItem" });
+            this.options.where[logic].push({ field, op, condition, typeIdentify: "QueryWhereItem" });
         }
         return this;
     }
@@ -145,7 +145,7 @@ class Query {
     }
 
     whereOp(field: string, op: WhereSymbol, condition: string): Query {
-        return this.where({ field, op, condition ,typeIdentify:"QueryWhereItem"});
+        return this.where({ field, op, condition, typeIdentify: "QueryWhereItem" });
     }
 
     whereOr(fieldOrConditionOrWhereData: string | QueryWhereItem, value: StringOrNull = null): Query {
@@ -248,7 +248,13 @@ class Query {
         }
         return this.db.config.connection!.delete(SqlBuilder.getDeleteSql(this.options));
     }
+    async count(): Promise<number> {
+        return parseInt((await this.field(" count(*) as _total_num ").value("_total_num")) as string) - 0;
+    }
 
+    async column(field: string):Promise<string[]> {
+        return (await this.select()).map(item => item[field]);
+    }
 
 }
 

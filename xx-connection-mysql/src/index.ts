@@ -63,6 +63,11 @@ class XXConnectionMysql implements IConnection {
         if (list.length === 0) return null;
         else return list[0];
     }
+
+
+
+
+
     async select(sqlData: SqlData): Promise<RowData[]> {
         return this.changeResult(await this.connectionHandler?.query(sqlData.getSql(), sqlData.getParams()));
     }

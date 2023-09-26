@@ -133,7 +133,7 @@ class Query {
         return this;
     }
     where(fieldOrConditionOrWhereData: string | QueryWhereItem | WhereData | BaseMap, value: StringOrNull | number = null): Query {
-        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value ? (value + "") : null);
+        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData,  value !==null ? (value + "") : null);
     }
 
     whereIn(field: string, value: Array<string | Number>) {

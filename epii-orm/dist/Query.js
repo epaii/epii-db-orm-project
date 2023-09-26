@@ -129,7 +129,7 @@ class Query {
         return this;
     }
     where(fieldOrConditionOrWhereData, value = null) {
-        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value ? (value + "") : null);
+        return this.mkWhereByCommon("and", fieldOrConditionOrWhereData, value !== null ? (value + "") : null);
     }
     whereIn(field, value) {
         return this.where(new WhereData_1.WhereData().putIn(field, value));

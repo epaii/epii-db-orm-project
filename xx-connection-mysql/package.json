@@ -1,8 +1,8 @@
 {
   "name": "xx-connection-mysql",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index",
   "dependencies": {
     "mysql2": "^3.6.1"
   }

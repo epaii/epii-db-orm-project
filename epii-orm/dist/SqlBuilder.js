@@ -69,7 +69,7 @@ exports.SqlBuilder = {
                 sqlBuilder.append(" ) ");
             }
         }
-        if (options.hasOwnProperty("order")) {
+        if (options.hasOwnProperty("order") && options.order.length > 0) {
             sqlBuilder.append(" order by ");
             sqlBuilder.append(options.order.join(","));
         }

@@ -19,7 +19,8 @@ class Query {
         where: {
             and: [],
             or: []
-        }
+        },
+        order:[]
     }
 
     db: DbOrm;

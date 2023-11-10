@@ -25,7 +25,8 @@ class Query {
             where: {
                 and: [],
                 or: []
-            }
+            },
+            order: []
         };
         this.rowMapFunction = null;
         this.db = db;

@@ -55,6 +55,9 @@ export interface IConnection {
     delete(deleteSql: SqlData): Promise<number>;
     query<T = any>(sql: string, params: Array<string | number>): Promise<T>;
     execute<T = any>(sql: string, params: Array<string | number>): Promise<T>;
+    beginTransaction(): Promise<void>;
+    commit(): Promise<void>;
+    rollback(): Promise<void>;
 }
 export type QueryOrderValue = 'desc' | 'asc';
 export interface ArrayMapFunction<S, T> {

@@ -4,6 +4,7 @@ declare class XXConnectionMysql implements IConnection {
     connectionHandler: mysql.Pool | null;
     options: mysql.ConnectionOptions;
     constructor(options: mysql.PoolOptions);
+    doQuery(): void;
     query<T = any>(sql: string, params?: (string | number)[]): Promise<T>;
     execute<T = any>(sql: string, params?: (string | number)[]): Promise<T>;
     getConnection(): mysql.Connection | null;
@@ -16,5 +17,8 @@ declare class XXConnectionMysql implements IConnection {
     changeResult(result: any[]): any;
     find(sqlData: SqlData): Promise<RowData | null>;
     select(sqlData: SqlData): Promise<RowData[]>;
+    beginTransaction(): Promise<void>;
+    commit(): Promise<void>;
+    rollback(): Promise<void>;
 }
 export { XXConnectionMysql };

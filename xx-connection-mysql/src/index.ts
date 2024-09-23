@@ -10,7 +10,11 @@ class XXConnectionMysql implements IConnection {
     constructor(options: mysql.PoolOptions) {
         this.options = options;
     }
+    doQuery() {
+        this.connectionHandler?.getConnection();
+    }
     async query<T = any>(sql: string, params: (string | number)[] = []): Promise<T> {
+
         return await this.connectionHandler?.query(sql, params)
     }
     async execute<T = any>(sql: string, params: (string | number)[] = []): Promise<T> {
@@ -70,6 +74,17 @@ class XXConnectionMysql implements IConnection {
 
     async select(sqlData: SqlData): Promise<RowData[]> {
         return this.changeResult(await this.connectionHandler?.query(sqlData.getSql(), sqlData.getParams()));
+    }
+
+    beginTransaction() {
+       return  this.connectionHandler!.beginTransaction();
+    }
+
+    commit() {
+       return this.connectionHandler!.commit();
+    }
+    rollback()  {
+      return  this.connectionHandler!.rollback();
     }
 
 

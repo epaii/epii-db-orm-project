@@ -150,8 +150,8 @@ class Query {
     whereBetween(field, start, end) {
         return this.where(field + " between " + start + " and " + end);
     }
-    select(conditionOrWhereDataOrQueryMapFunction = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    select() {
+        return __awaiter(this, arguments, void 0, function* (conditionOrWhereDataOrQueryMapFunction = null) {
             if (conditionOrWhereDataOrQueryMapFunction != null) {
                 if (typeof conditionOrWhereDataOrQueryMapFunction === "function") {
                     this.rowMapFunction = conditionOrWhereDataOrQueryMapFunction;
@@ -173,8 +173,8 @@ class Query {
             }
         });
     }
-    selectForMap(key = "id", field = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    selectForMap() {
+        return __awaiter(this, arguments, void 0, function* (key = "id", field = null) {
             let list = yield this.select();
             let outMap = new Map();
             list.forEach((item) => {
@@ -183,8 +183,8 @@ class Query {
             return outMap;
         });
     }
-    find(conditionOrWhereData = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    find() {
+        return __awaiter(this, arguments, void 0, function* (conditionOrWhereData = null) {
             if (conditionOrWhereData != null) {
                 if (typeof conditionOrWhereData === "number") {
                     this.where("id", conditionOrWhereData + "");
@@ -200,8 +200,8 @@ class Query {
             return null;
         });
     }
-    value(field, dvalue = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    value(field_1) {
+        return __awaiter(this, arguments, void 0, function* (field, dvalue = null) {
             let info = yield this.find();
             if (info == null) {
                 return dvalue;

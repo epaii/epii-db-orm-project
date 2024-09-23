@@ -26,7 +26,7 @@ export interface QueryWhereItem {
     field: string,
     op: string,
     condition: string,
-    typeIdentify:"QueryWhereItem"
+    typeIdentify: "QueryWhereItem"
 }
 
 export type DbOrmConfig = {
@@ -68,13 +68,17 @@ export interface IConnection {
     delete(deleteSql: SqlData): Promise<number>;
     query<T = any>(sql: string, params: Array<string | number>): Promise<T>;
     execute<T = any>(sql: string, params: Array<string | number>): Promise<T>;
+    beginTransaction(): Promise<void>;
+    commit(): Promise<void>;
+    rollback(): Promise<void>
+
 }
 
 export type QueryOrderValue = 'desc' | 'asc';
 
 export interface ArrayMapFunction<S, T> {
-    (item: S, index: number): Promise<T>|T
+    (item: S, index: number): Promise<T> | T
 }
 
-export type QueryMapFunction<D=any> = ArrayMapFunction<RowData, D>;
+export type QueryMapFunction<D = any> = ArrayMapFunction<RowData, D>;
 

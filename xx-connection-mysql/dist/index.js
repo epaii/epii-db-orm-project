@@ -31,15 +31,19 @@ class XXConnectionMysql {
         });
         this.options = options;
     }
-    query(sql, params = []) {
+    doQuery() {
         var _a;
-        return __awaiter(this, void 0, void 0, function* () {
+        (_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.getConnection();
+    }
+    query(sql_1) {
+        return __awaiter(this, arguments, void 0, function* (sql, params = []) {
+            var _a;
             return yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.query(sql, params));
         });
     }
-    execute(sql, params = []) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
+    execute(sql_1) {
+        return __awaiter(this, arguments, void 0, function* (sql, params = []) {
+            var _a;
             return yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sql, params));
         });
     }
@@ -53,29 +57,29 @@ class XXConnectionMysql {
         return this.connectionHandler;
     }
     insert(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
             return resut.insertId - 0;
         });
     }
     update(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
             return resut.changedRows - 0;
         });
     }
     insertAll(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
             return resut.affectedRows - 0;
         });
     }
     delete(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
             return resut.affectedRows - 0;
         });
@@ -93,10 +97,19 @@ class XXConnectionMysql {
         });
     }
     select(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             return this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.query(sqlData.getSql(), sqlData.getParams())));
         });
+    }
+    beginTransaction() {
+        return this.connectionHandler.beginTransaction();
+    }
+    commit() {
+        return this.connectionHandler.commit();
+    }
+    rollback() {
+        return this.connectionHandler.rollback();
     }
 }
 exports.XXConnectionMysql = XXConnectionMysql;

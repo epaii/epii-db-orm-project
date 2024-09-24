@@ -97,7 +97,7 @@ exports.SqlBuilder = {
             sqlBuilder.append("(");
             for (let [key] of mapData) {
                 sqlBuilder.append("?");
-                params.push(mapData.get(key).toString());
+                params.push(mapData.get(key));
                 sqlBuilder.append(",");
             }
             sqlBuilder.pop();
@@ -125,7 +125,7 @@ exports.SqlBuilder = {
             sqlBuilder.append(" ) VALUES (");
             for (let [key] of mapData) {
                 sqlBuilder.append("?");
-                params.push(mapData.get(key).toString());
+                params.push(mapData.get(key));
                 sqlBuilder.append(",");
             }
             sqlBuilder.pop();

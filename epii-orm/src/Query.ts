@@ -117,7 +117,7 @@ class Query {
                     }
                     if (fieldOrConditionOrWhereData.mapData.size > 0) {
                         for (let [key, item] of fieldOrConditionOrWhereData.mapData) {
-                            this.mkWhereByCommon(logic, key, item.toString());
+                            this.mkWhereByCommon(logic, key, item!.toString());
                         }
                     }
                 } else {

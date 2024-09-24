@@ -100,7 +100,7 @@ export const SqlBuilder = {
     if (!fieldDataList || fieldDataList.length == 0) throw new Error("insert list data");
     let mapData = fieldDataList[0].mapData;
     let sqlBuilder: StringBuilder = new StringBuilder();
-    let params: Array<Object> = [];
+    let params: Array<any> = [];
     sqlBuilder.append("insert into ");
     sqlBuilder.append(options.table.toString());
     sqlBuilder.append(" (");
@@ -117,7 +117,7 @@ export const SqlBuilder = {
       sqlBuilder.append("(");
       for (let [key] of mapData) {
         sqlBuilder.append("?");
-        params.push(mapData.get(key)!.toString());
+        params.push(mapData.get(key));
         sqlBuilder.append(",");
       }
       sqlBuilder.pop();
@@ -136,7 +136,7 @@ export const SqlBuilder = {
     if (mapData) {
 
       let sqlBuilder: StringBuilder = new StringBuilder();
-      let params: Array<Object> = [];
+      let params: Array<any> = [];
       sqlBuilder.append("insert into ");
       sqlBuilder.append(options.table.toString());
       sqlBuilder.append(" (");
@@ -152,7 +152,7 @@ export const SqlBuilder = {
       sqlBuilder.append(" ) VALUES (");
       for (let [key] of mapData) {
         sqlBuilder.append("?");
-        params.push(mapData.get(key)!.toString());
+        params.push(mapData.get(key));
         sqlBuilder.append(",");
       }
       sqlBuilder.pop();

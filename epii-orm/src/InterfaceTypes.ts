@@ -4,7 +4,8 @@ export type FunctionOrNull = Function | null;
 export type StringOrNull = string | null;
 
 export type QueryJoinType = 'left' | 'right' | 'inner';
-export type BaseType = string | number | boolean;
+export type BaseType = string | number | boolean | null;
+export type BaseTypeNotNull = string | number | boolean ;
 export type WhereSymbol = '>' | '>=' | '<' | '<=' | '!=' | '<>' | '!>' | '!<'
 export interface PlainObject {
     [key: string]: BaseType

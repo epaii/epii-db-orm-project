@@ -12,5 +12,5 @@ export declare class WhereData {
     putSymbol(field: string, type: WhereSymbol, value: string): WhereData;
     putBetween(field: string, sValue: string, eValue: string): WhereData;
     putNotBetween(field: string, sValue: string, eValue: string): WhereData;
-    static make(keyOrData: string | null | undefined, value: string): WhereData;
+    static make(keyOrData: (string | null) | undefined, value: string): WhereData;
 }

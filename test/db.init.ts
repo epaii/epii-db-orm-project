@@ -1,4 +1,4 @@
-import { Db } from "../epii-orm";
+import { Db } from "../epii-orm/src/index";
 import { XXConnectionMysql } from "../xx-connection-mysql/src";
 
 export async function DbInit() {
@@ -7,11 +7,11 @@ export async function DbInit() {
         user: "inner_test_dbu",
         password: "oO8JJXJJvT2rNsnO",
         database: "inner_test",
-        connectionLimit:5
-    });
+       // connectionLimit:1
+    },"ConnectionOptions");
     Db.initialization({
         tablePrefix: "wsl_",
-        connection: connectionMysql,
+        connectionPool: connectionMysql,
         onSql: function (sql: string, params: Array<Object>) {
             console.log(sql);
             console.log(params);

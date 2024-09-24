@@ -22,11 +22,14 @@ export interface QueryWhereItem {
     condition: string;
     typeIdentify: "QueryWhereItem";
 }
-export type DbOrmConfig = {
+export interface DbOrmConfig {
     tablePrefix: string;
     connection: IConnection | null;
     onSql: Function | null;
-};
+}
+export interface DbPoolConfig extends DbOrmConfig {
+    connectionPool: IPool | null;
+}
 export interface QueryOptions {
     tablePre: string;
     name: string;
@@ -46,7 +49,7 @@ export interface QueryOptions {
     };
 }
 export type QueryOptionsKeys = 'fields' | 'group' | 'having';
-export interface IConnection {
+export interface IPool {
     insert(sqlData: SqlData): Promise<number>;
     update(sqlData: SqlData): Promise<number>;
     find(sqlData: SqlData): Promise<RowData | null>;
@@ -55,6 +58,9 @@ export interface IConnection {
     delete(deleteSql: SqlData): Promise<number>;
     query<T = any>(sql: string, params: Array<string | number>): Promise<T>;
     execute<T = any>(sql: string, params: Array<string | number>): Promise<T>;
+    createConnection(): Promise<IConnection>;
+}
+export interface IConnection extends IPool {
     beginTransaction(): Promise<void>;
     commit(): Promise<void>;
     rollback(): Promise<void>;

@@ -1,12 +1,12 @@
-import { DbOrm } from "./Db";
+import { IDBHandler } from "./Db";
 import { StringOrNull, QueryOptionsKeys, QueryJoinType, RowData, QueryOptions, QueryWhereItem, PlainObject, QueryOrderValue, ArrayMapFunction, QueryMapFunction, WhereSymbol, BaseMap } from "./InterfaceTypes";
 import { FieldData } from "./map/FieldData";
 import { WhereData } from "./map/WhereData";
 declare class Query {
     options: QueryOptions;
-    db: DbOrm;
+    db: IDBHandler;
     rowMapFunction: ArrayMapFunction<any, any> | null;
-    constructor(db: DbOrm, name: string, tablePre?: string);
+    constructor(db: IDBHandler, name: string, tablePre?: string);
     map<T>(fun: ArrayMapFunction<RowData, T>): Query;
     setOption(key: QueryOptionsKeys, value: string): Query;
     alias(rename: string): Query;

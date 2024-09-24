@@ -1,14 +1,15 @@
 import { FunctionOrNull, IConnection, RowData, SqlData } from "epii-orm";
 import mysql from "mysql2/promise";
+type OptionsType = "ConnectionOptions" | "PoolOptions" | "Connection" | "PoolConnection";
 declare class XXConnectionMysql implements IConnection {
-    connectionHandler: mysql.Pool | null;
-    options: mysql.ConnectionOptions;
-    constructor(options: mysql.PoolOptions);
-    doQuery(): void;
+    connectionHandler: mysql.Pool | mysql.PoolConnection | mysql.Connection | null;
+    optionType: OptionsType;
+    options: mysql.ConnectionOptions | mysql.PoolOptions | null;
+    constructor(optionsOrConnection: mysql.PoolOptions | mysql.ConnectionOptions | mysql.Connection, optionType?: OptionsType);
     query<T = any>(sql: string, params?: (string | number)[]): Promise<T>;
     execute<T = any>(sql: string, params?: (string | number)[]): Promise<T>;
-    getConnection(): mysql.Connection | null;
-    connection(): mysql.Pool | null;
+    createConnection(): Promise<IConnection>;
+    connection(): Promise<mysql.Pool | mysql.Connection | null>;
     then: FunctionOrNull;
     insert(sqlData: SqlData): Promise<number>;
     update(sqlData: SqlData): Promise<number>;
@@ -16,6 +17,7 @@ declare class XXConnectionMysql implements IConnection {
     delete(sqlData: SqlData): Promise<number>;
     changeResult(result: any[]): any;
     find(sqlData: SqlData): Promise<RowData | null>;
+    release(): void;
     select(sqlData: SqlData): Promise<RowData[]>;
     beginTransaction(): Promise<void>;
     commit(): Promise<void>;

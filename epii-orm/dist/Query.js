@@ -159,7 +159,7 @@ class Query {
                 else
                     this.where(conditionOrWhereDataOrQueryMapFunction);
             }
-            let list = yield this.db.config.connection.select(SqlBuilder_1.SqlBuilder.getSelectSql(this.options));
+            let list = yield this.db.getConnection().select(SqlBuilder_1.SqlBuilder.getSelectSql(this.options));
             if (this.rowMapFunction != null) {
                 let outlist = [];
                 for (let index = 0; index < list.length; index++) {
@@ -217,19 +217,19 @@ class Query {
         if (data != null) {
             this.data(data);
         }
-        return this.db.config.connection.update(SqlBuilder_1.SqlBuilder.getUpdateSql(this.options));
+        return this.db.getConnection().update(SqlBuilder_1.SqlBuilder.getUpdateSql(this.options));
     }
     insert(data = null) {
         if (data != null) {
             this.data(data);
         }
-        return this.db.config.connection.insert(SqlBuilder_1.SqlBuilder.getInsertSql(this.options));
+        return this.db.getConnection().insert(SqlBuilder_1.SqlBuilder.getInsertSql(this.options));
     }
     insertAll(list) {
         this.options.fieldDataList = list.map(item => {
             return item instanceof FieldData_1.FieldData ? item : FieldData_1.FieldData.make(item);
         });
-        return this.db.config.connection.insertAll(SqlBuilder_1.SqlBuilder.getInsertAllSql(this.options));
+        return this.db.getConnection().insertAll(SqlBuilder_1.SqlBuilder.getInsertAllSql(this.options));
     }
     delete(id = null) {
         if (id != null)
@@ -237,7 +237,7 @@ class Query {
         if ((this.options.where.and.length == 0) && (this.options.where.or.length == 0)) {
             throw new Error("删除必须设置where语句");
         }
-        return this.db.config.connection.delete(SqlBuilder_1.SqlBuilder.getDeleteSql(this.options));
+        return this.db.getConnection().delete(SqlBuilder_1.SqlBuilder.getDeleteSql(this.options));
     }
     count() {
         return __awaiter(this, void 0, void 0, function* () {

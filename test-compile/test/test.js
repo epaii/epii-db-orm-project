@@ -9,13 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const epii_orm_1 = require("../epii-orm");
+const index_1 = require("../epii-orm/src/index");
+const Db_1 = require("../epii-orm/src/Db");
 const db_init_1 = require("./db.init");
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, db_init_1.DbInit)();
-        let xlx = yield epii_orm_1.Db.name("test_xlx").find();
+        let xlx = yield index_1.Db.name("test_xlx").find();
         console.log(xlx.id);
+        let xlx1 = yield (0, Db_1.DbTransaction)((Db) => __awaiter(this, void 0, void 0, function* () {
+            yield Db.name("test_xlx").find();
+        }));
+        console.log(xlx1);
     });
 }
 start();

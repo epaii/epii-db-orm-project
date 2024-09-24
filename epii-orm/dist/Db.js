@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Db = exports.DbOrm = void 0;
+exports.Db = exports.DbOrm = exports.DbPool = void 0;
+exports.DbTransaction = DbTransaction;
 const Query_1 = require("./Query");
-class DbOrm {
+class DbPool {
     name(name) {
         return new Query_1.Query(this, name, this.config.tablePrefix);
     }
@@ -21,20 +22,36 @@ class DbOrm {
     constructor(config = null) {
         this.config = {
             tablePrefix: "",
-            connection: null
+            connection: null,
+            connectionPool: null
         };
         if (config != null)
             this.config = config;
     }
+    getConnection() {
+        if (this.config.connectionPool) {
+            return this.config.connectionPool;
+        }
+        if (this.config.connection) {
+            return this.config.connection;
+        }
+        throw new Error("connection is null");
+    }
     query(sql, params) {
-        return this.config.connection.query(sql, params);
+        return this.getConnection().query(sql, params);
     }
     execute(sql, params) {
-        return this.config.connection.execute(sql, params);
+        return this.getConnection().execute(sql, params);
     }
     initialization(config) {
         this.config = Object.assign(this.config, config);
     }
+    createConnection() {
+        return this.config.connectionPool.createConnection();
+    }
+}
+exports.DbPool = DbPool;
+class DbOrm extends DbPool {
     beginTransaction() {
         return this.config.connection.beginTransaction();
     }
@@ -44,19 +61,25 @@ class DbOrm {
     rollback() {
         return this.config.connection.rollback();
     }
-    transaction(func) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.beginTransaction();
-            try {
-                let ret = yield func();
-                yield this.commit();
-                return ret;
-            }
-            catch (error) {
-                yield this.rollback();
-            }
-        });
-    }
 }
 exports.DbOrm = DbOrm;
-exports.Db = new DbOrm();
+exports.Db = new DbPool();
+function DbTransaction(func) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const tmpDb = new DbOrm({
+            tablePrefix: exports.Db.config.tablePrefix,
+            onSql: exports.Db.config.onSql,
+            connection: yield exports.Db.createConnection()
+        });
+        yield tmpDb.beginTransaction();
+        try {
+            let ret = yield func(tmpDb);
+            yield tmpDb.commit();
+            return ret;
+        }
+        catch (error) {
+            yield tmpDb.rollback();
+            throw error;
+        }
+    });
+}

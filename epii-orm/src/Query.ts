@@ -1,4 +1,4 @@
-import { DbOrm } from "./Db";
+import { DbOrm, IDBHandler } from "./Db";
 import { StringOrNull, QueryOptionsKeys, QueryJoinType, QueryJoinItem, RowData, QueryOptions, QueryWhereLogic, QueryWhereItem, PlainObject, QueryOrderValue, BaseType, ArrayMapFunction, QueryMapFunction, WhereSymbol, BaseMap } from "./InterfaceTypes";
 import { SqlBuilder } from "./SqlBuilder";
 import { FieldData } from "./map/FieldData";
@@ -23,10 +23,10 @@ class Query {
         order:[]
     }
 
-    db: DbOrm;
+    db: IDBHandler;
     rowMapFunction: ArrayMapFunction<any, any> | null = null;
 
-    constructor(db: DbOrm, name: string, tablePre: string = "") {
+    constructor(db: IDBHandler, name: string, tablePre: string = "") {
         this.db = db;
         this.options.name = name;
         this.options.tablePre = tablePre;
@@ -168,7 +168,7 @@ class Query {
             } else
                 this.where(conditionOrWhereDataOrQueryMapFunction);
         }
-        let list = await this.db.config.connection!.select(SqlBuilder.getSelectSql(this.options));
+        let list = await this.db.getConnection().select(SqlBuilder.getSelectSql(this.options));
         if (this.rowMapFunction != null) {
             let outlist: Array<T> = [];
             for (let index = 0; index < list.length; index++) {
@@ -222,7 +222,7 @@ class Query {
         if (data != null) {
             this.data(data);
         }
-        return this.db.config.connection!.update(SqlBuilder.getUpdateSql(this.options));
+        return this.db.getConnection().update(SqlBuilder.getUpdateSql(this.options));
 
     }
 
@@ -230,14 +230,14 @@ class Query {
         if (data != null) {
             this.data(data);
         }
-        return this.db.config.connection!.insert(SqlBuilder.getInsertSql(this.options));
+        return this.db.getConnection().insert(SqlBuilder.getInsertSql(this.options));
     }
 
     insertAll(list: Array<PlainObject | FieldData>): Promise<number> {
         this.options.fieldDataList = list.map(item => {
             return item instanceof FieldData ? item : FieldData.make(item);
         });
-        return this.db.config.connection!.insertAll(SqlBuilder.getInsertAllSql(this.options));
+        return this.db.getConnection().insertAll(SqlBuilder.getInsertAllSql(this.options));
     }
 
 
@@ -247,7 +247,7 @@ class Query {
         if ((this.options.where.and.length == 0) && (this.options.where.or.length == 0)) {
             throw new Error("删除必须设置where语句");
         }
-        return this.db.config.connection!.delete(SqlBuilder.getDeleteSql(this.options));
+        return this.db.getConnection().delete(SqlBuilder.getDeleteSql(this.options));
     }
     async count(): Promise<number> {
         return parseInt((await this.field(" count(*) as _total_num ").value("_total_num")) as string) - 0;

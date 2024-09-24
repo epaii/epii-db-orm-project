@@ -15,12 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.XXConnectionMysql = void 0;
 const promise_1 = __importDefault(require("mysql2/promise"));
 class XXConnectionMysql {
-    constructor(options) {
+    constructor(optionsOrConnection, optionType = "PoolOptions") {
         this.connectionHandler = null;
+        this.optionType = "PoolOptions";
+        this.options = null;
         this.then = (r, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 if (this.connectionHandler == null) {
-                    this.connectionHandler = this.connection();
+                    this.connectionHandler = yield this.connection();
                 }
                 this.then = null;
                 r(this);
@@ -29,54 +31,71 @@ class XXConnectionMysql {
                 reject(e);
             }
         });
-        this.options = options;
+        this.optionType = optionType;
+        if (["ConnectionOptions", "PoolOptions"].indexOf(optionType) > -1) {
+            this.options = optionsOrConnection;
+        }
+        else if (optionType === "PoolConnection") {
+            this.connectionHandler = optionsOrConnection;
+        }
+        else if (optionType === "Connection") {
+            this.connectionHandler = optionsOrConnection;
+        }
     }
-    query(sql, params = []) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
+    query(sql_1) {
+        return __awaiter(this, arguments, void 0, function* (sql, params = []) {
+            var _a;
             return yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.query(sql, params));
         });
     }
-    execute(sql, params = []) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
+    execute(sql_1) {
+        return __awaiter(this, arguments, void 0, function* (sql, params = []) {
+            var _a;
             return yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sql, params));
         });
     }
-    getConnection() {
-        return this.connectionHandler;
+    createConnection() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.optionType === "PoolOptions") {
+                return yield new XXConnectionMysql(yield this.connectionHandler.getConnection(), "Connection");
+            }
+            else
+                return yield new XXConnectionMysql(this.connectionHandler, "Connection");
+        });
     }
     connection() {
-        if (this.connectionHandler == null) {
-            this.connectionHandler = promise_1.default.createPool(this.options);
-        }
-        return this.connectionHandler;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connectionHandler == null) {
+                if (this.optionType === "PoolOptions")
+                    this.connectionHandler = promise_1.default.createPool(this.options);
+                else if (this.optionType === "ConnectionOptions") {
+                    this.connectionHandler = yield promise_1.default.createConnection(this.options);
+                }
+            }
+            return this.connectionHandler;
+        });
     }
     insert(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
+            let resut = this.changeResult(yield this.execute(sqlData.getSql(), sqlData.getParams()));
             return resut.insertId - 0;
         });
     }
     update(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
+            let resut = this.changeResult(yield this.execute(sqlData.getSql(), sqlData.getParams()));
             return resut.changedRows - 0;
         });
     }
     insertAll(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
+            let resut = this.changeResult(yield this.execute(sqlData.getSql(), sqlData.getParams()));
             return resut.affectedRows - 0;
         });
     }
     delete(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            let resut = this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.execute(sqlData.getSql(), sqlData.getParams())));
+            let resut = this.changeResult(yield this.execute(sqlData.getSql(), sqlData.getParams()));
             return resut.affectedRows - 0;
         });
     }
@@ -92,11 +111,33 @@ class XXConnectionMysql {
                 return list[0];
         });
     }
+    release() {
+        if (this.optionType === "PoolConnection") {
+            this.connectionHandler.release();
+        }
+    }
     select(sqlData) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            return this.changeResult(yield ((_a = this.connectionHandler) === null || _a === void 0 ? void 0 : _a.query(sqlData.getSql(), sqlData.getParams())));
+            return this.changeResult(yield this.query(sqlData.getSql(), sqlData.getParams()));
         });
+    }
+    beginTransaction() {
+        if ((this.optionType === "ConnectionOptions") || (this.optionType === "PoolConnection")) {
+            return this.connectionHandler.beginTransaction();
+        }
+        throw new Error("Pool is not enable transaction");
+    }
+    commit() {
+        if ((this.optionType === "ConnectionOptions") || (this.optionType === "PoolConnection")) {
+            return this.connectionHandler.commit();
+        }
+        throw new Error("Pool is not enable transaction");
+    }
+    rollback() {
+        if ((this.optionType === "ConnectionOptions") || (this.optionType === "PoolConnection")) {
+            return this.connectionHandler.rollback();
+        }
+        throw new Error("Pool is not enable transaction");
     }
 }
 exports.XXConnectionMysql = XXConnectionMysql;

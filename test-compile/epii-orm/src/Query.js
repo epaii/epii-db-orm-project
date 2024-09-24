@@ -25,7 +25,8 @@ class Query {
             where: {
                 and: [],
                 or: []
-            }
+            },
+            order: []
         };
         this.rowMapFunction = null;
         this.db = db;
@@ -149,8 +150,8 @@ class Query {
     whereBetween(field, start, end) {
         return this.where(field + " between " + start + " and " + end);
     }
-    select(conditionOrWhereDataOrQueryMapFunction = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    select() {
+        return __awaiter(this, arguments, void 0, function* (conditionOrWhereDataOrQueryMapFunction = null) {
             if (conditionOrWhereDataOrQueryMapFunction != null) {
                 if (typeof conditionOrWhereDataOrQueryMapFunction === "function") {
                     this.rowMapFunction = conditionOrWhereDataOrQueryMapFunction;
@@ -158,7 +159,7 @@ class Query {
                 else
                     this.where(conditionOrWhereDataOrQueryMapFunction);
             }
-            let list = yield this.db.config.connection.select(SqlBuilder_1.SqlBuilder.getSelectSql(this.options));
+            let list = yield this.db.getConnection().select(SqlBuilder_1.SqlBuilder.getSelectSql(this.options));
             if (this.rowMapFunction != null) {
                 let outlist = [];
                 for (let index = 0; index < list.length; index++) {
@@ -172,8 +173,8 @@ class Query {
             }
         });
     }
-    selectForMap(key = "id", field = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    selectForMap() {
+        return __awaiter(this, arguments, void 0, function* (key = "id", field = null) {
             let list = yield this.select();
             let outMap = new Map();
             list.forEach((item) => {
@@ -182,8 +183,8 @@ class Query {
             return outMap;
         });
     }
-    find(conditionOrWhereData = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    find() {
+        return __awaiter(this, arguments, void 0, function* (conditionOrWhereData = null) {
             if (conditionOrWhereData != null) {
                 if (typeof conditionOrWhereData === "number") {
                     this.where("id", conditionOrWhereData + "");
@@ -199,8 +200,8 @@ class Query {
             return null;
         });
     }
-    value(field, dvalue = null) {
-        return __awaiter(this, void 0, void 0, function* () {
+    value(field_1) {
+        return __awaiter(this, arguments, void 0, function* (field, dvalue = null) {
             let info = yield this.find();
             if (info == null) {
                 return dvalue;
@@ -216,19 +217,19 @@ class Query {
         if (data != null) {
             this.data(data);
         }
-        return this.db.config.connection.update(SqlBuilder_1.SqlBuilder.getUpdateSql(this.options));
+        return this.db.getConnection().update(SqlBuilder_1.SqlBuilder.getUpdateSql(this.options));
     }
     insert(data = null) {
         if (data != null) {
             this.data(data);
         }
-        return this.db.config.connection.insert(SqlBuilder_1.SqlBuilder.getInsertSql(this.options));
+        return this.db.getConnection().insert(SqlBuilder_1.SqlBuilder.getInsertSql(this.options));
     }
     insertAll(list) {
         this.options.fieldDataList = list.map(item => {
             return item instanceof FieldData_1.FieldData ? item : FieldData_1.FieldData.make(item);
         });
-        return this.db.config.connection.insertAll(SqlBuilder_1.SqlBuilder.getInsertAllSql(this.options));
+        return this.db.getConnection().insertAll(SqlBuilder_1.SqlBuilder.getInsertAllSql(this.options));
     }
     delete(id = null) {
         if (id != null)
@@ -236,7 +237,7 @@ class Query {
         if ((this.options.where.and.length == 0) && (this.options.where.or.length == 0)) {
             throw new Error("删除必须设置where语句");
         }
-        return this.db.config.connection.delete(SqlBuilder_1.SqlBuilder.getDeleteSql(this.options));
+        return this.db.getConnection().delete(SqlBuilder_1.SqlBuilder.getDeleteSql(this.options));
     }
     count() {
         return __awaiter(this, void 0, void 0, function* () {

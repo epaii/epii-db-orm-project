@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DbInit = void 0;
-const epii_orm_1 = require("../epii-orm");
+exports.DbInit = DbInit;
+const index_1 = require("../epii-orm/src/index");
 const src_1 = require("../xx-connection-mysql/src");
 function DbInit() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -21,7 +21,7 @@ function DbInit() {
             database: "inner_test",
             connectionLimit: 5
         });
-        epii_orm_1.Db.initialization({
+        index_1.Db.initialization({
             tablePrefix: "wsl_",
             connection: connectionMysql,
             onSql: function (sql, params) {
@@ -31,4 +31,3 @@ function DbInit() {
         });
     });
 }
-exports.DbInit = DbInit;
